@@ -27,7 +27,8 @@ int Init_thdDisplayClock (void) {
   if (!tid_thdDisplayClock) return(-1);
   return(0);
 }
- 
+
+// Display a numeric component of the clock
 static void drawNumber(uint32_t number, uint32_t offset){
 	GLCD_DrawChar( (XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/10);
 	GLCD_DrawChar( (XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number%10);

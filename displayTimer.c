@@ -25,14 +25,16 @@ int Init_thdDisplayTimer(void) {
 #define CHARWIDTH 16
 #define CHARHEIGHT 24
 
+// Display a numeric component of the stopwatch
 static void drawNumber(uint32_t number, uint32_t offset){
-	GLCD_DrawChar( (XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/10);
-	GLCD_DrawChar( (XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number%10);
+	GLCD_DrawChar((XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/10);
+	GLCD_DrawChar((XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number%10);
 }
 void thdDisplayTimer (void *argument) {
 	uint32_t lminute, lsecond, lmillisecond;
 	
 	while(1){
+		// We're waiting for any component of the stopwatch to update
 		uint32_t tflags = osThreadFlagsWait(UPDATE_MINUTES | UPDATE_MILLISECONDS | UPDATE_SECONDS | UPDATE_COLONS, osFlagsWaitAny, osWaitForever);
 
 		// Get values of shared resources
@@ -58,8 +60,8 @@ void thdDisplayTimer (void *argument) {
 			drawNumber(lmillisecond, 6);
 		}
 		if(tflags & UPDATE_COLONS){
-			GLCD_DrawChar( (XOFFSET+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
-			GLCD_DrawChar( (XOFFSET+5)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
+			GLCD_DrawChar((XOFFSET+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
+			GLCD_DrawChar((XOFFSET+5)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
 		}
 	}
 }

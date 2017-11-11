@@ -21,7 +21,6 @@ uint32_t timer_minute = 0, timer_second = 0, timer_millisecond = 0;
 osMutexId_t mutHour, mutMinute, mutSecond, mutTimerMinute, mutTimerSecond, mutTimerMillisecond;
 osSemaphoreId_t semIncMinutes;
 osSemaphoreId_t semIncHours;
-osSemaphoreId_t semUpdateClock;
 
 /********************************************/
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
@@ -38,8 +37,8 @@ uint32_t HAL_GetTick(void) {
 void app_hw_init (void *argument) {
 	
 	GLCD_Initialize();
-	GLCD_SetBackgroundColor(GLCD_COLOR_PURPLE);
-	GLCD_SetForegroundColor(GLCD_COLOR_WHITE);
+	GLCD_SetBackgroundColor(GLCD_COLOR_WHITE);
+	GLCD_SetForegroundColor(GLCD_COLOR_PURPLE);
 	GLCD_ClearScreen(); 
 	GLCD_SetFont(&GLCD_Font_16x24);
 	
@@ -100,7 +99,6 @@ int main (void) {
 	// In thdIncSeconds/thdIncMinutes as well as IQRs
 	semIncMinutes = osSemaphoreNew(2, 0, NULL);
 	semIncHours = osSemaphoreNew(2, 0, NULL);
-	semUpdateClock = osSemaphoreNew(5, 0, NULL);// Because there are many ways the clock can be updated
 	
 	
 	
@@ -108,8 +106,6 @@ int main (void) {
 	if(semIncMinutes == NULL)
 			while(1){}
 	if(semIncHours == NULL)
-		while(1){}
-	if(semUpdateClock == NULL)
 		while(1){}
 			
 
