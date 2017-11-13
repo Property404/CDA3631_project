@@ -11,7 +11,8 @@
 #include "GLCD_Config.h"
 #include "stm32f2xx_hal.h"
 #include "rtx_os.h"
-#include "rtosClockObjects.h"    // specific to this project
+#include "timer.h"
+#include "clock.h"
 extern GLCD_FONT GLCD_Font_16x24;
 
 // Note that the main file declares the space for all the system's variables (someone has to),
@@ -27,7 +28,7 @@ osSemaphoreId_t semTimer, semIncTimerSeconds;
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
 // of SysTick, so we need to route the HAL's tick call to the RTOS's tick.
 uint32_t HAL_GetTick(void) { 
-  return osKernelGetTickCount();
+	return osKernelGetTickCount();
 }
 
 

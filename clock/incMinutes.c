@@ -1,6 +1,6 @@
 #include "cmsis_os2.h"
 #include "rtx_os.h"
-#include "rtosClockObjects.h"
+#include "clock.h"
  
 /*Increments minutes. When minutes reaches 60, minute is reset and hour is incremented */
  

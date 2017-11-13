@@ -1,6 +1,6 @@
 #include "cmsis_os2.h"                                        // CMSIS RTOS header file
 #include "rtx_os.h"
-#include "rtosClockObjects.h"
+#include "timer.h"
 #include "Board_GLCD.h" 
 #include "GLCD_Config.h"
 /*----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 #include "cmsis_os2.h"                                     
 #include "rtx_os.h"
-#include "rtosClockObjects.h"
+#include "clock.h"
  
 /* This thread increments seconds every tick
 		Upon reaching second=60, seconds reverts to 0, and minutes are incremented */

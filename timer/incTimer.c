@@ -1,6 +1,6 @@
 #include "cmsis_os2.h"                                     
 #include "rtx_os.h"
-#include "rtosClockObjects.h"
+#include "timer.h"
  
 /* This thread increments the milliseconds of the timer every 10 ticks
  * as well as manages the timer in general*/

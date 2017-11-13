@@ -1,6 +1,6 @@
 #include "cmsis_os2.h"
 #include "rtx_os.h"
-#include "rtosClockObjects.h"
+#include "timer.h"
  
 /*Increments seconds for the timer. When seconds reaches 60, minutes is incremented */
  
@@ -26,7 +26,7 @@ void thdIncTimerSeconds (void *argument) {
 		
 		
 		// Increment minutes 
-		if(second==0){
+		if(timer_second==0){
 		//	osSemaphoreRelease(semIncHours);
 		}
 		
