@@ -17,15 +17,15 @@ int Init_thdIncTimer (void) {
 }
  
 static void resetTimer(){
-				osMutexAcquire(mutTimerMillisecond, osWaitForever);
-				timer_millisecond = 0;
-				osMutexRelease(mutTimerMillisecond);
-				osMutexAcquire(mutTimerSecond, osWaitForever);
-				timer_second = 0;
-				osMutexRelease(mutTimerSecond);
-				osMutexAcquire(mutTimerMinute, osWaitForever);
-				timer_minute = 0;
-				osMutexRelease(mutTimerMinute);			
+	osMutexAcquire(mutTimerMillisecond, osWaitForever);
+	timer_millisecond = 0;
+	osMutexRelease(mutTimerMillisecond);
+	osMutexAcquire(mutTimerSecond, osWaitForever);
+	timer_second = 0;
+	osMutexRelease(mutTimerSecond);
+	osMutexAcquire(mutTimerMinute, osWaitForever);
+	timer_minute = 0;
+	osMutexRelease(mutTimerMinute);
 }
 void thdIncTimer (void *argument) {
 	while(1) {
@@ -47,11 +47,11 @@ void thdIncTimer (void *argument) {
 			
 			// Increment minutes
 			if(timer_millisecond==0){
-				//osSemaphoreRelease(semIncMinutes);
+				osSemaphoreRelease(semIncTimerSeconds);
 			}
 			
 			osMutexRelease(mutTimerMillisecond);
-			osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_MILLISECONDS);
+			//osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_MILLISECONDS);
 
 			if(osSemaphoreAcquire(semTimer, 0) == osOK){
 				// Time to pause!

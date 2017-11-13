@@ -21,7 +21,7 @@ uint32_t timer_minute = 0, timer_second = 0, timer_millisecond = 0;
 osMutexId_t mutHour, mutMinute, mutSecond, mutTimerMinute, mutTimerSecond, mutTimerMillisecond;
 osSemaphoreId_t semIncMinutes;
 osSemaphoreId_t semIncHours;
-osSemaphoreId_t semTimer;
+osSemaphoreId_t semTimer, semIncTimerSeconds;
 
 /********************************************/
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
@@ -50,6 +50,7 @@ void app_hw_init (void *argument) {
 	Init_thdIncSeconds();
 	Init_thdIncMinutes();
 	Init_thdIncTimer();
+	Init_thdIncTimerSeconds();
 	
 	
 	
@@ -102,6 +103,7 @@ int main (void) {
 	semIncMinutes = osSemaphoreNew(2, 0, NULL);
 	semIncHours = osSemaphoreNew(2, 0, NULL);
 	semTimer = osSemaphoreNew(1, 0, NULL);
+	semIncTimerSeconds = osSemaphoreNew(1, 0, NULL);
 
 	
 	// Check for problems with semaphore/ef creation
