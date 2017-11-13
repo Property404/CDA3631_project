@@ -17,7 +17,7 @@ int Init_thdDisplayTimer(void) {
   return(0);
 }
 
-#define XOFFSET 6  // time horizontal offset from left in characters
+#define XOFFSET 5.5  // time horizontal offset from left in characters
 #define YOFFSET 9	// time vertical offset from top in characters
  
 #define LCDWIDTH 320
@@ -26,9 +26,14 @@ int Init_thdDisplayTimer(void) {
 #define CHARHEIGHT 24
 
 // Display a numeric component of the stopwatch
-static void drawNumber(uint32_t number, uint32_t offset){
+static void drawTwoDigitNumber(uint32_t number, uint32_t offset){
 	GLCD_DrawChar((XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/10);
 	GLCD_DrawChar((XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number%10);
+}
+static void drawThreeDigitNumber(uint32_t number, uint32_t offset){
+	GLCD_DrawChar((XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/100);
+	GLCD_DrawChar((XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + (number%100)/10);
+	GLCD_DrawChar((XOFFSET+offset+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + (number%10));
 }
 void thdDisplayTimer (void *argument) {
 	uint32_t lminute, lsecond, lmillisecond;
@@ -51,13 +56,13 @@ void thdDisplayTimer (void *argument) {
 		osMutexRelease(mutTimerMinute);
 		
 		if (tflags & UPDATE_MINUTES){
-			drawNumber(lminute, 0);
+			drawTwoDigitNumber(lminute, 0);
 		}
 		if(tflags & UPDATE_SECONDS){
-			drawNumber(lsecond, 3);
+			drawTwoDigitNumber(lsecond, 3);
 		}
 		if(tflags & UPDATE_MILLISECONDS){
-			drawNumber(lmillisecond, 6);
+			drawThreeDigitNumber(lmillisecond, 6);
 		}
 		if(tflags & UPDATE_COLONS){
 			GLCD_DrawChar((XOFFSET+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');

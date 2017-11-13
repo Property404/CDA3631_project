@@ -14,8 +14,11 @@
 	extern osMutexId_t mutTimerMinute;
 	extern osMutexId_t mutTimerSecond;
 	extern osMutexId_t mutTimerMillisecond;
+
+	// Semaphores and flags
 	extern osSemaphoreId_t semIncMinutes;
 	extern osSemaphoreId_t semIncHours;
+	extern osSemaphoreId_t semTimer;
 	
 	//threads
 	extern osThreadId_t tid_thdDisplayClock;
@@ -23,11 +26,13 @@
 	extern osThreadId_t tid_thdIncSeconds; 
 	extern osThreadId_t tid_thdIncMinutes; 
 	extern osThreadId_t tid_thdIncHours; 
+	extern osThreadId_t tid_thdIncTimer; 
 	int Init_thdDisplayClock (void);
 	int Init_thdDisplayTimer (void);
 	int Init_thdIncSeconds (void);
 	int Init_thdIncMinutes (void);
 	int Init_thdIncHours (void);
+	int Init_thdIncTimer (void);
 	
 	// Update flags for the clock and timer/stopwatch
 	#define UPDATE_MILLISECONDS (1<<0) // Only the stopwatch has milliseconds
@@ -35,6 +40,7 @@
 	#define UPDATE_SECONDS (1<<1)
 	#define UPDATE_MINUTES (1<<2)
 	#define UPDATE_COLONS (1<<3)
+	#define UPDATE_ALL_TIME_COMPONENTS 0xFF
 	
 	// Flags for the timer/stopwatch
 	#define START_TIMER (1<<0)

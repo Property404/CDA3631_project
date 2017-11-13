@@ -12,7 +12,7 @@
 #include "stm32f2xx_hal.h"
 #include "rtx_os.h"
 #include "rtosClockObjects.h"    // specific to this project
- extern GLCD_FONT GLCD_Font_16x24;
+extern GLCD_FONT GLCD_Font_16x24;
 
 // Note that the main file declares the space for all the system's variables (someone has to),
 // and "extern" declarations are in the rtosClockObjects.h file so other files can find them
@@ -21,6 +21,7 @@ uint32_t timer_minute = 0, timer_second = 0, timer_millisecond = 0;
 osMutexId_t mutHour, mutMinute, mutSecond, mutTimerMinute, mutTimerSecond, mutTimerMillisecond;
 osSemaphoreId_t semIncMinutes;
 osSemaphoreId_t semIncHours;
+osSemaphoreId_t semTimer;
 
 /********************************************/
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
@@ -48,18 +49,19 @@ void app_hw_init (void *argument) {
 	Init_thdDisplayClock();
 	Init_thdIncSeconds();
 	Init_thdIncMinutes();
+	Init_thdIncTimer();
 	
 	
 	
 	
-  osThreadExit(); // job is done, thread suicide. There better be other threads created...
+	osThreadExit(); // job is done, thread suicide. There better be other threads created...
 }
 
 static osMutexId_t newMutexOrDie(){
 	osMutexId_t mut_id = osMutexNew(NULL);
 	if(mut_id == NULL){
 		while(1){}
-		}
+	}
 	return mut_id;
 }
 
@@ -99,13 +101,15 @@ int main (void) {
 	// In thdIncSeconds/thdIncMinutes as well as IQRs
 	semIncMinutes = osSemaphoreNew(2, 0, NULL);
 	semIncHours = osSemaphoreNew(2, 0, NULL);
+	semTimer = osSemaphoreNew(1, 0, NULL);
+
 	
-	
-	
-	// Check for problems with semaphore creation
+	// Check for problems with semaphore/ef creation
 	if(semIncMinutes == NULL)
-			while(1){}
+		while(1){}
 	if(semIncHours == NULL)
+		while(1){}
+	if(semTimer == NULL)
 		while(1){}
 			
 
@@ -117,9 +121,9 @@ int main (void) {
 	mutTimerSecond = newMutexOrDie();
 	
 	
-  osThreadNew(app_hw_init, NULL, NULL); // Create application main thread
-  osKernelStart();                      // Start thread execution
-  for (;;) {}  													// should never get here
+	osThreadNew(app_hw_init, NULL, NULL); // Create application main thread
+	osKernelStart();                      // Start thread execution
+	for (;;) {}
 }
 
 
@@ -136,7 +140,7 @@ void EXTI15_10_IRQHandler(void)
 	if (EXTI->PR & 1<<15)  // flag bit for EXTI15 is set
 	{
 		EXTI->PR = 1<<15;   // Acknowledge flag bit by storing a 1 into the flag bit, 0's in other bits are ignored.
-		osSemaphoreRelease(semIncMinutes);
+		osSemaphoreRelease(semTimer);
 	}
 	// TAMPER button
 	else
