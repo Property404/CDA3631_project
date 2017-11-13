@@ -10,10 +10,10 @@
 	extern osMutexId_t mutSecond;
 	extern uint32_t timer_minute;
 	extern uint32_t timer_second;
-	extern uint32_t timer_millisecond;
+	extern uint32_t timer_centisecond;
 	extern osMutexId_t mutTimerMinute;
 	extern osMutexId_t mutTimerSecond;
-	extern osMutexId_t mutTimerMillisecond;
+	extern osMutexId_t mutTimerCentisecond;
 
 	// Semaphores and flags
 	extern osSemaphoreId_t semIncMinutes;
@@ -38,8 +38,8 @@
 	int Init_thdIncTimerSeconds (void);
 	
 	// Update flags for the clock and timer/stopwatch
-	#define UPDATE_MILLISECONDS (1<<0) // Only the stopwatch has milliseconds
-	#define UPDATE_HOURS UPDATE_MILLISECONDS // Only the clock has hours
+	#define UPDATE_CENTISECONDS (1<<0) // Only the stopwatch has CENTISECONDS
+	#define UPDATE_HOURS UPDATE_CENTISECONDS // Only the clock has hours
 	#define UPDATE_SECONDS (1<<1)
 	#define UPDATE_MINUTES (1<<2)
 	#define UPDATE_COLONS (1<<3)

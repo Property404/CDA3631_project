@@ -17,8 +17,8 @@ extern GLCD_FONT GLCD_Font_16x24;
 // Note that the main file declares the space for all the system's variables (someone has to),
 // and "extern" declarations are in the rtosClockObjects.h file so other files can find them
 uint32_t hour=23, minute=59, second=57;
-uint32_t timer_minute = 0, timer_second = 0, timer_millisecond = 0;
-osMutexId_t mutHour, mutMinute, mutSecond, mutTimerMinute, mutTimerSecond, mutTimerMillisecond;
+uint32_t timer_minute = 0, timer_second = 0, timer_centisecond = 0;
+osMutexId_t mutHour, mutMinute, mutSecond, mutTimerMinute, mutTimerSecond, mutTimerCentisecond;
 osSemaphoreId_t semIncMinutes;
 osSemaphoreId_t semIncHours;
 osSemaphoreId_t semTimer, semIncTimerSeconds;
@@ -118,7 +118,7 @@ int main (void) {
 	mutHour = newMutexOrDie();
 	mutMinute = newMutexOrDie();
 	mutSecond = newMutexOrDie();
-	mutTimerMillisecond = newMutexOrDie();
+	mutTimerCentisecond = newMutexOrDie();
 	mutTimerMinute = newMutexOrDie();
 	mutTimerSecond = newMutexOrDie();
 	

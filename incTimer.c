@@ -2,7 +2,7 @@
 #include "rtx_os.h"
 #include "rtosClockObjects.h"
  
-/* This thread increments the milliseconds of the timer every tick
+/* This thread increments the milliseconds of the timer every 10 ticks
  * as well as manages the timer in general*/
  
 void thdIncTimer (void *argument);                                 // thread function
@@ -17,9 +17,9 @@ int Init_thdIncTimer (void) {
 }
  
 static void resetTimer(){
-	osMutexAcquire(mutTimerMillisecond, osWaitForever);
-	timer_millisecond = 0;
-	osMutexRelease(mutTimerMillisecond);
+	osMutexAcquire(mutTimerCentisecond, osWaitForever);
+	timer_centisecond = 0;
+	osMutexRelease(mutTimerCentisecond);
 	osMutexAcquire(mutTimerSecond, osWaitForever);
 	timer_second = 0;
 	osMutexRelease(mutTimerSecond);
@@ -38,20 +38,20 @@ void thdIncTimer (void *argument) {
 
 		while (1) {
 			// Wait a tick
-			osDelay(1);
+			osDelay(10);
 	   
 			// Increment seconds
-			osMutexAcquire(mutTimerMillisecond, osWaitForever);
-			timer_millisecond++;
-			timer_millisecond%=1000;
+			osMutexAcquire(mutTimerCentisecond, osWaitForever);
+			timer_centisecond++;
+			timer_centisecond%=100;
 			
 			// Increment minutes
-			if(timer_millisecond==0){
+			if(timer_centisecond==0){
 				osSemaphoreRelease(semIncTimerSeconds);
 			}
 			
-			osMutexRelease(mutTimerMillisecond);
-			//osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_MILLISECONDS);
+			osMutexRelease(mutTimerCentisecond);
+			osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_CENTISECONDS);
 
 			if(osSemaphoreAcquire(semTimer, 0) == osOK){
 				// Time to pause!

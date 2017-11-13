@@ -13,11 +13,11 @@ int Init_thdDisplayTimer(void) {
  
   tid_thdDisplayTimer= osThreadNew (thdDisplayTimer, NULL, NULL);
   if (!tid_thdDisplayTimer) return(-1);
-	osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_MILLISECONDS | UPDATE_SECONDS | UPDATE_MINUTES | UPDATE_COLONS);
+	osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_ALL_TIME_COMPONENTS);
   return(0);
 }
 
-#define XOFFSET 5.5  // time horizontal offset from left in characters
+#define XOFFSET 6  // time horizontal offset from left in characters
 #define YOFFSET 9	// time vertical offset from top in characters
  
 #define LCDWIDTH 320
@@ -26,26 +26,22 @@ int Init_thdDisplayTimer(void) {
 #define CHARHEIGHT 24
 
 // Display a numeric component of the stopwatch
-static void drawTwoDigitNumber(uint32_t number, uint32_t offset){
+static void drawNumber(uint32_t number, uint32_t offset){
 	GLCD_DrawChar((XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/10);
 	GLCD_DrawChar((XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number%10);
 }
-static void drawThreeDigitNumber(uint32_t number, uint32_t offset){
-	GLCD_DrawChar((XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/100);
-	GLCD_DrawChar((XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + (number%100)/10);
-	GLCD_DrawChar((XOFFSET+offset+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + (number%10));
-}
+
 void thdDisplayTimer (void *argument) {
 	uint32_t lminute, lsecond, lmillisecond;
 	
 	while(1){
 		// We're waiting for any component of the stopwatch to update
-		uint32_t tflags = osThreadFlagsWait(UPDATE_MINUTES | UPDATE_MILLISECONDS | UPDATE_SECONDS | UPDATE_COLONS, osFlagsWaitAny, osWaitForever);
+		uint32_t tflags = osThreadFlagsWait(UPDATE_ALL_TIME_COMPONENTS, osFlagsWaitAny, osWaitForever);
 
 		// Get values of shared resources
-		osMutexAcquire(mutTimerMillisecond, osWaitForever);
-		lmillisecond = timer_millisecond;
-		osMutexRelease(mutTimerMillisecond);
+		osMutexAcquire(mutTimerCentisecond, osWaitForever);
+		lmillisecond = timer_centisecond;
+		osMutexRelease(mutTimerCentisecond);
 		
 		osMutexAcquire(mutTimerSecond, osWaitForever);
 		lsecond = timer_second;
@@ -56,13 +52,13 @@ void thdDisplayTimer (void *argument) {
 		osMutexRelease(mutTimerMinute);
 		
 		if (tflags & UPDATE_MINUTES){
-			drawTwoDigitNumber(lminute, 0);
+			drawNumber(lminute, 0);
 		}
 		if(tflags & UPDATE_SECONDS){
-			drawTwoDigitNumber(lsecond, 3);
+			drawNumber(lsecond, 3);
 		}
-		if(tflags & UPDATE_MILLISECONDS){
-			drawThreeDigitNumber(lmillisecond, 6);
+		if(tflags & UPDATE_CENTISECONDS){
+			drawNumber(lmillisecond, 6);
 		}
 		if(tflags & UPDATE_COLONS){
 			GLCD_DrawChar((XOFFSET+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
