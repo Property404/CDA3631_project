@@ -4,3 +4,6 @@
 !*.h
 !*.s
 !.gitignore
+!timer
+!common_headers
+!clock
