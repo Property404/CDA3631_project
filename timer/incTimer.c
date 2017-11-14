@@ -20,13 +20,16 @@ static void resetTimer(){
 	osMutexAcquire(mutTimerCentisecond, osWaitForever);
 	timer_centisecond = 0;
 	osMutexRelease(mutTimerCentisecond);
+	
 	osMutexAcquire(mutTimerSecond, osWaitForever);
 	timer_second = 0;
 	osMutexRelease(mutTimerSecond);
+	
 	osMutexAcquire(mutTimerMinute, osWaitForever);
 	timer_minute = 0;
 	osMutexRelease(mutTimerMinute);
 }
+
 void thdIncTimer (void *argument) {
 	while(1) {
 		// Wait until it's time to start the timer

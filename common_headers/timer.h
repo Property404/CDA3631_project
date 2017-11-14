@@ -14,15 +14,18 @@ extern osMutexId_t mutTimerCentisecond;
 // Semaphores and flags
 extern osSemaphoreId_t semTimer;
 extern osSemaphoreId_t semIncTimerSeconds;
+extern osSemaphoreId_t semIncTimerMinutes;
 
 //threads
 extern osThreadId_t tid_thdDisplayTimer;
 extern osThreadId_t tid_thdIncTimer; 
 extern osThreadId_t tid_thdIncTimerSeconds;
+extern osThreadId_t tid_thdIncTimerMinutes;
 
 int Init_thdDisplayTimer (void);
 int Init_thdIncTimer (void);
 int Init_thdIncTimerSeconds (void);
+int Init_thdIncTimerMinutes(void);
 
 
 // Flags for the timer/stopwatch

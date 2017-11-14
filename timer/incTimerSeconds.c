@@ -27,7 +27,7 @@ void thdIncTimerSeconds (void *argument) {
 		
 		// Increment minutes 
 		if(timer_second==0){
-		//	osSemaphoreRelease(semIncHours);
+			osSemaphoreRelease(semIncTimerMinutes);
 		}
 		
 		osMutexRelease(mutTimerSecond);
