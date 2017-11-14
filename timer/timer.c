@@ -16,6 +16,8 @@ void initializeTimerObjects(void){
 	mutTimerCentisecond = newMutexOrDie();
 	mutTimerMinute = newMutexOrDie();
 	mutTimerSecond = newMutexOrDie();
+	/* Unoike the clock, each of these semaphore can only be affected by
+	 * one thing, so we set max count to 1 */
 	semTimer = newSemaphoreOrDie(1, 0);
 	semIncTimerSeconds = newSemaphoreOrDie(1, 0);
 	semIncTimerMinutes = newSemaphoreOrDie(1, 0);

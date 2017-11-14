@@ -16,11 +16,10 @@ osThreadId_t tid_thdDisplayClock;                                      // thread
 
 int Init_thdDisplayClock (void) {
  
-  tid_thdDisplayClock = osThreadNew (thdDisplayClock, NULL, NULL);
+	tid_thdDisplayClock = osThreadNew (thdDisplayClock, NULL, NULL);
 	osThreadFlagsSet(tid_thdDisplayClock, UPDATE_ALL_TIME_COMPONENTS);
-
-  if (!tid_thdDisplayClock) return(-1);
-  return(0);
+	if (!tid_thdDisplayClock) return(-1);
+	return(0);
 }
 
 void thdDisplayClock (void *argument) {

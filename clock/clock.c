@@ -1,12 +1,14 @@
 #include "clock.h"
 #include "rtos_util.h"
 
-// Declare RTOS objects
+// RTOS objects
 uint32_t hour=23, minute=59, second=57;
 osMutexId_t mutHour, mutMinute, mutSecond;
 osSemaphoreId_t semIncMinutes, semIncHours;
 
 // Initialization methods
+// We define them here to make the
+// main.c file cleaner
 void initializeClockThreads(void){
 	Init_thdDisplayClock();
 	Init_thdIncSeconds();

@@ -1,8 +1,7 @@
-#ifndef COMMON_HEADER_DISPLAY_TIME_COMPONENTS
-#define COMMON_HEADER_DISPLAY_TIME_COMPONENTS
 /* This header provides display methods to both the stopwatch and clock
  */
- 
+#ifndef COMMON_HEADER_DISPLAY_TIME_COMPONENTS
+#define COMMON_HEADER_DISPLAY_TIME_COMPONENTS
 #include "time_components.h"
 
 #define XOFFSET 6  // time horizontal offset from left in characters
