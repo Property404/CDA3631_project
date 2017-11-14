@@ -15,15 +15,6 @@
 #include "clock.h"
 extern GLCD_FONT GLCD_Font_16x24;
 
-// Note that the main file declares the space for all the system's variables (someone has to),
-// and "extern" declarations are in the rtosClockObjects.h file so other files can find them
-uint32_t hour=23, minute=59, second=57;
-uint32_t timer_minute = 0, timer_second = 0, timer_centisecond = 0;
-osMutexId_t mutHour, mutMinute, mutSecond, mutTimerMinute, mutTimerSecond, mutTimerCentisecond;
-osSemaphoreId_t semIncMinutes;
-osSemaphoreId_t semIncHours;
-osSemaphoreId_t semTimer, semIncTimerSeconds;
-
 /********************************************/
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
 // of SysTick, so we need to route the HAL's tick call to the RTOS's tick.
@@ -45,26 +36,11 @@ void app_hw_init (void *argument) {
 	GLCD_SetFont(&GLCD_Font_16x24);
 	
 	// Create other threads here so that all initialization is done before others get scheduled.
-	Init_thdIncHours();
-	Init_thdDisplayTimer();
-	Init_thdDisplayClock();
-	Init_thdIncSeconds();
-	Init_thdIncMinutes();
-	Init_thdIncTimer();
-	Init_thdIncTimerSeconds();
-	
-	
-	
+	initializeClockThreads();
+	initializeTimerThreads();
+
 	
 	osThreadExit(); // job is done, thread suicide. There better be other threads created...
-}
-
-static osMutexId_t newMutexOrDie(){
-	osMutexId_t mut_id = osMutexNew(NULL);
-	if(mut_id == NULL){
-		while(1){}
-	}
-	return mut_id;
 }
 
 int main (void) {
@@ -97,33 +73,11 @@ int main (void) {
 	NVIC->ISER[EXTI0_IRQn/32] |= 1<<(EXTI0_IRQn%32);
 
 	
-
-	// Minutes and hours have a maximum of two
-	// Because thdIncMinutes and thdIncHours are unblocked
-	// In thdIncSeconds/thdIncMinutes as well as IQRs
-	semIncMinutes = osSemaphoreNew(2, 0, NULL);
-	semIncHours = osSemaphoreNew(2, 0, NULL);
-	semTimer = osSemaphoreNew(1, 0, NULL);
-	semIncTimerSeconds = osSemaphoreNew(1, 0, NULL);
-
-	
-	// Check for problems with semaphore/ef creation
-	if(semIncMinutes == NULL)
-		while(1){}
-	if(semIncHours == NULL)
-		while(1){}
-	if(semTimer == NULL)
-		while(1){}
+	// Initialize object groups
+	initializeClockObjects();
+	initializeTimerObjects();
 			
 
-	mutHour = newMutexOrDie();
-	mutMinute = newMutexOrDie();
-	mutSecond = newMutexOrDie();
-	mutTimerCentisecond = newMutexOrDie();
-	mutTimerMinute = newMutexOrDie();
-	mutTimerSecond = newMutexOrDie();
-	
-	
 	osThreadNew(app_hw_init, NULL, NULL); // Create application main thread
 	osKernelStart();                      // Start thread execution
 	for (;;) {}

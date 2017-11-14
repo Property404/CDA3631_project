@@ -1,8 +1,9 @@
 #include "cmsis_os2.h"                                        // CMSIS RTOS header file
 #include "rtx_os.h"
+#include "Board_GLCD.h"
 #include "timer.h"
-#include "Board_GLCD.h" 
-#include "GLCD_Config.h"
+#include "display_time_components.h"
+
 /*----------------------------------------------------------------------------
 *      DisplayTimer:: Writes the stopwatch to the LCD
 *-------------------------------------------------------------------------------*/
@@ -10,26 +11,13 @@ void thdDisplayTimer (void *argument);                                 // thread
 osThreadId_t tid_thdDisplayTimer;                                      // thread id
 
 int Init_thdDisplayTimer(void) {
- 
   tid_thdDisplayTimer= osThreadNew (thdDisplayTimer, NULL, NULL);
   if (!tid_thdDisplayTimer) return(-1);
 	osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_ALL_TIME_COMPONENTS);
   return(0);
 }
 
-#define XOFFSET 6  // time horizontal offset from left in characters
 #define YOFFSET 9	// time vertical offset from top in characters
- 
-#define LCDWIDTH 320
-#define LCDHEIGHT 240
-#define CHARWIDTH 16
-#define CHARHEIGHT 24
-
-// Display a numeric component of the stopwatch
-static void drawNumber(uint32_t number, uint32_t offset){
-	GLCD_DrawChar((XOFFSET+offset)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number/10);
-	GLCD_DrawChar((XOFFSET+offset+1)*CHARWIDTH,YOFFSET*CHARHEIGHT, 0x30 + number%10);
-}
 
 void thdDisplayTimer (void *argument) {
 	uint32_t lminute, lsecond, lmillisecond;
@@ -52,17 +40,16 @@ void thdDisplayTimer (void *argument) {
 		osMutexRelease(mutTimerMinute);
 		
 		if (tflags & UPDATE_MINUTES){
-			drawNumber(lminute, 0);
+			drawNumber(lminute, 0, YOFFSET);
 		}
 		if(tflags & UPDATE_SECONDS){
-			drawNumber(lsecond, 3);
+			drawNumber(lsecond, 3, YOFFSET);
 		}
 		if(tflags & UPDATE_CENTISECONDS){
-			drawNumber(lmillisecond, 6);
+			drawNumber(lmillisecond, 6, YOFFSET);
 		}
 		if(tflags & UPDATE_COLONS){
-			GLCD_DrawChar((XOFFSET+2)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
-			GLCD_DrawChar((XOFFSET+5)*CHARWIDTH,YOFFSET*CHARHEIGHT, ':');
+			drawColons(YOFFSET);
 		}
 	}
 }

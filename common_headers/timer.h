@@ -1,6 +1,8 @@
 #ifndef COMMON_HEADER_TIMER
 #define COMMON_HEADER_TIMER
+#include "rtx_os.h"
 #include "time_components.h"
+/* This header provides definitions relating exclusively to the timer */
 // shared variables and mutexes
 extern uint32_t timer_minute;
 extern uint32_t timer_second;
@@ -27,5 +29,9 @@ int Init_thdIncTimerSeconds (void);
 #define START_TIMER (1<<0)
 #define STOP_TIMER (1<<1)
 #define RESTART_TIMER (1<<2)
+
+// Init methods
+void initializeTimerThreads(void);
+void initializeTimerObjects(void);
 
 #endif

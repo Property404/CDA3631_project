@@ -1,6 +1,9 @@
 #ifndef COMMON_HEADER_CLOCK
 #define COMMON_HEADER_CLOCK
+#include "rtx_os.h"
 #include "time_components.h"
+
+/* This header provides definitions relating exclusively to the clock */
 // shared variables and mutexes
 extern uint32_t hour; 
 extern uint32_t minute; 
@@ -22,4 +25,7 @@ int Init_thdDisplayClock (void);
 int Init_thdIncSeconds (void);
 int Init_thdIncMinutes (void);
 int Init_thdIncHours (void);
+
+void initializeClockThreads(void);
+void initializeClockObjects(void);
 #endif
