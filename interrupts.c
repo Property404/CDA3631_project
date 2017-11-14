@@ -46,4 +46,5 @@ void EXTI0_IRQHandler(void){
 // Serial port
 void USART3_IRQHandler(void){
 	/* Serial handling code goes here*/
+	osSemaphoreRelease(semTimer);
 }
