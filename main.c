@@ -80,8 +80,6 @@ int main (void) {
 	NVIC->ISER[EXTI0_IRQn/32] |= 1<<(EXTI0_IRQn%32);
 		
 
-
-	
 	// Initialize object groups
 	initializeClockObjects();
 	initializeTimerObjects();
