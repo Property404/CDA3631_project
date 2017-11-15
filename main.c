@@ -52,6 +52,12 @@ int main (void) {
 	Buttons_Initialize();			// Does NOT use a HAL tick during initialization
 	LED_Initialize();
 
+	// Setup serial connection
+	SER_Init(115200);
+	NVIC_SetPriority(USART3_IRQn, 5);
+	NVIC_EnableIRQ(USART3_IRQn);
+	USART3 -> CR1 |= USART_CR1_RXNEIE;
+	
 	// To configure the USER and WAKEUP buttons to generate an interrupt...
 	// Enable EXTI15, EXTI13 and EXTI0 - Edge interrupt for all pin 15's, 13's 0's
 	EXTI->IMR |= (1<<15) | (1<<13) | (1<<0);  
@@ -73,12 +79,7 @@ int main (void) {
 	NVIC->ISER[EXTI15_10_IRQn/32] |= 1<< (EXTI15_10_IRQn%32);
 	NVIC->ISER[EXTI0_IRQn/32] |= 1<<(EXTI0_IRQn%32);
 		
-	
-	// Setup serial connection
-	SER_Init(115200);
-	NVIC_SetPriority(USART3_IRQn, 5);
-	NVIC_EnableIRQ(USART3_IRQn);
-	USART3 -> CR1 |= USART_CR1_RXNEIE;
+
 
 	
 	// Initialize object groups
