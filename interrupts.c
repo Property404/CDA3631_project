@@ -5,6 +5,7 @@
 #include "rtx_os.h"
 #include "timer.h"
 #include "clock.h"
+#include "Serial.h"
 
 // USER button and TAMPER button
 // More code than the WAKEUP button handler because
