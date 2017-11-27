@@ -47,9 +47,10 @@ void EXTI0_IRQHandler(void){
 
 // Serial port
 void USART3_IRQHandler(void){
+	/*
 	int32_t* character = osMemoryPoolAlloc(mplCharBuffer, 0);
 	*character = SER_GetChar();
 	if(*character == '\r')*character = 0;
-	osMessageQueuePut(msgqCharBuffer, character, NULL, 0);
+	osMessageQueuePut(msgqCharBuffer, character, NULL, 0);*/
 	return;
 }

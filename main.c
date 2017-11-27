@@ -15,7 +15,7 @@
 #include "clock.h"
 #include "Serial.h"
 #include "sms.h"
-extern GLCD_FONT GLCD_Font_16x24;
+extern GLCD_FONT GLCD_Font_6x8;
 
 /********************************************/
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
@@ -35,12 +35,12 @@ void app_hw_init (void *argument) {
 	GLCD_SetBackgroundColor(GLCD_COLOR_WHITE);
 	GLCD_SetForegroundColor(GLCD_COLOR_PURPLE);
 	GLCD_ClearScreen(); 
-	GLCD_SetFont(&GLCD_Font_16x24);
+	GLCD_SetFont(&GLCD_Font_6x8);
 	
 	// Create other threads here so that all initialization is done before others get scheduled.
 	initializeClockThreads();
 	initializeTimerThreads();
-//	initializeSMSThreads();
+	initializeSMSThreads();
 
 	
 	osThreadExit(); // job is done, thread suicide. There better be other threads created...
@@ -85,7 +85,7 @@ int main (void) {
 	// Initialize object groups
 	initializeClockObjects();
 	initializeTimerObjects();
-//	initializeSMSObjects();
+	initializeSMSObjects();
 			
 
 	osThreadNew(app_hw_init, NULL, NULL); // Create application main thread
