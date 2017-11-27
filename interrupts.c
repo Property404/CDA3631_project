@@ -5,6 +5,8 @@
 #include "rtx_os.h"
 #include "timer.h"
 #include "clock.h"
+#include "sms.h"
+#include "Serial.h"
 
 // USER button and TAMPER button
 // More code than the WAKEUP button handler because
@@ -45,8 +47,9 @@ void EXTI0_IRQHandler(void){
 
 // Serial port
 void USART3_IRQHandler(void){
-	int32_t character = SER_GetChar();
-	/* Serial handling code goes here*/
-	osSemaphoreRelease(semTimer);
+	int32_t* character = osMemoryPoolAlloc(mplCharBuffer, 0);
+	*character = SER_GetChar();
+	if(*character == '\r')*character = 0;
+	osMessageQueuePut(msgqCharBuffer, character, NULL, 0);
 	return;
 }

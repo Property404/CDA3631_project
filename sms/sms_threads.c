@@ -2,16 +2,10 @@
 #include "sms.h"
 #include "string.h"
 #include "clock.h"
+#include "Board_GLCD.h"
 
-// Declare objects here, because they're private to these threads
-// Wrap all objects manipulation in small functions in sms.c
-osMemoryPoolId_t mpTextMessage;
-osMessageQueueId_t mqTextMessage;
-osSemaphoreId_t semAddTextMessage;
-osMemoryPoolId_t mpCharBuffer;
-osMessageQueueId_t mqCharBuffer;
-
-// Add a text message to the queue
+// Add a text message to the msgq
+void thdAddTextMessage(void* argument);
 osThreadId_t tid_thdAddTextMessage;
 int Init_thdAddTextMessage (void) {
  
@@ -22,38 +16,45 @@ int Init_thdAddTextMessage (void) {
 }
 
 void thdAddTextMessage(void* argument){
+	uint32_t total_received = 0;
 	while(1){
+		GLCD_DrawChar(10*15, 4*24, '0'+(char)total_received);
 		
 		// Store next 160 or less characters from serial in a buffer
 		char buffer[MAX_TEXT_MESSAGE_LENGTH+1] = {0};
 		unsigned int length = 0;
 		while(1){
 			// Get the next character from the buffer or die
-			if(osMessageQueueGet(mqCharBuffer, (buffer+length), NULL, osWaitForever) != osOK) while(1);
+			char * pointer_to_char;
+			if(osMessageQueueGet(msgqCharBuffer, &pointer_to_char, NULL, osWaitForever) != osOK) while(1);
+			buffer[length] = *pointer_to_char;
+			osMemoryPoolFree(msgqCharBuffer, pointer_to_char);
 			if(buffer[length] == 0){break;}
 			length++; // Fix plz
-			if(length == MAX_TEXT_MESSAGE_LENGTH){buffer[length] = 0; break}
+			if(length == MAX_TEXT_MESSAGE_LENGTH){buffer[length] = 0; break;}
 		}
-		// Cause length is not "zero-indexed"
-		length++;
 		
-		// Convert to a Text Message struct
-		TextMessage text_message = osMemoryPoolAlloc(mplTxt;
-		memcpy(text_message.message, buffer, length);
-		text_message.length = length;
+		if(length == 0) continue;
+		
+		// Add Text Message struct to memory pool
+		TextMessage* text_message = osMemoryPoolAlloc(mplTextMessage, NULL);
+		memcpy(text_message->message, buffer, length);
+		text_message->length = length;
 		// Have to add the time
 		osMutexAcquire(mutSecond, osWaitForever);
-		text_message.second = second;
+		text_message->second = second;
 		osMutexRelease(mutSecond);
 		osMutexAcquire(mutMinute, osWaitForever);
-		text_message.minute = minute;
+		text_message->minute = minute;
 		osMutexRelease(mutMinute);
 		osMutexAcquire(mutHour, osWaitForever);
-		text_message.hour = hour;
+		text_message->hour = hour;
 		osMutexRelease(mutHour);
 		
-		// Add to memory pool
+		// Add to linked list
+		/* to do */
 		
+		total_received++;
 
 	}
 }

@@ -16,4 +16,15 @@ static inline osSemaphoreId_t newSemaphoreOrDie(uint32_t max, uint32_t count){
 	if(sem_id == NULL)while(1);
 	return sem_id;
 }
+// Etc
+static inline osMemoryPoolId_t newMemoryPoolOrDie(uint32_t count, uint32_t element_size){
+	osMemoryPoolId_t mp_id = osMemoryPoolNew(count, element_size, NULL);
+	if(mp_id == NULL)while(1);
+	return mp_id;
+}
+static inline osMemoryPoolId_t newMessageQueueOrDie(uint32_t count, uint32_t element_size){
+	osMessageQueueId_t mq_id = osMessageQueueNew(count, element_size, NULL);
+	if(mq_id == NULL)while(1);
+	return mq_id;
+}
 #endif
