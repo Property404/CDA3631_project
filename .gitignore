@@ -9,3 +9,5 @@
 !clock
 !sms
 !hardware
+*.uvoptx
+*.uvprojx

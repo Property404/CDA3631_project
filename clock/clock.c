@@ -10,10 +10,10 @@ osSemaphoreId_t semIncMinutes, semIncHours;
 // We define them here to make the
 // main.c file cleaner
 void initializeClockThreads(void){
-	Init_thdDisplayClock();
-	Init_thdIncSeconds();
-	Init_thdIncMinutes();
-	Init_thdIncHours();
+	if(-1 == Init_thdDisplayClock())while(1);
+	if(-1 == Init_thdIncSeconds())while(1);
+	if(-1 == Init_thdIncMinutes())while(1);
+	if(-1 == Init_thdIncHours())while(1);
 }
 
 void initializeClockObjects(void){

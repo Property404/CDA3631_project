@@ -1,7 +1,7 @@
 #ifndef COMMON_HEADER_SMS
 #define COMMON_HEADER_SMS
 #define MAX_TEXT_MESSAGE_LENGTH 160
-#define MAX_NUMBER_OF_TEXT_MESSAGES 10
+#define MAX_NUMBER_OF_TEXT_MESSAGES 11
 #define CHAR_BUFFER_SIZE MAX_TEXT_MESSAGE_LENGTH
 
 
@@ -27,10 +27,9 @@ extern osMemoryPoolId_t mplCharBuffer;
 extern osMessageQueueId_t msgqCharBuffer;
 
 // Check for issues
-/*
 #define _STATIC_ASSERT(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]
 #define _MEM_POOL_SIZE MAX_NUMBER_OF_TEXT_MESSAGES*sizeof(TextMessage) + CHAR_BUFFER_SIZE*sizeof(char)
 #include "RTX_Config.h"
 _STATIC_ASSERT(_MEM_POOL_SIZE < OS_MEMPOOL_DATA_SIZE, memory_pools_too_big);
-*/
+_STATIC_ASSERT(CHAR_BUFFER_SIZE < OS_MSGQUEUE_DATA_SIZE, message_queue_too_big);
 #endif

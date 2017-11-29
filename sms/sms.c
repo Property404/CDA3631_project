@@ -13,4 +13,5 @@ void initializeSMSObjects(void){
 	mplTextMessage = newMemoryPoolOrDie(MAX_NUMBER_OF_TEXT_MESSAGES, sizeof(TextMessage));
 	msgqCharBuffer = newMessageQueueOrDie(CHAR_BUFFER_SIZE, sizeof(char));
 	mplCharBuffer  = newMemoryPoolOrDie(CHAR_BUFFER_SIZE, sizeof(char));
+	
 }

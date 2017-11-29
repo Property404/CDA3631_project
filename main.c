@@ -30,6 +30,11 @@ uint32_t HAL_GetTick(void) {
  * in order for several HW devices to initialize correctly, like the GLCD
  *---------------------------------------------------------------------------*/
 void app_hw_init (void *argument) {
+	// Initialize object groups
+	initializeClockObjects();
+	initializeTimerObjects();
+	initializeSMSObjects();
+	
 	
 	GLCD_Initialize();
 	GLCD_SetBackgroundColor(GLCD_COLOR_WHITE);
@@ -38,8 +43,9 @@ void app_hw_init (void *argument) {
 	GLCD_SetFont(&GLCD_Font_6x8);
 	
 	// Create other threads here so that all initialization is done before others get scheduled.
-	initializeClockThreads();
 	initializeTimerThreads();
+	initializeClockThreads();
+
 	initializeSMSThreads();
 
 	
@@ -82,10 +88,7 @@ int main (void) {
 	NVIC->ISER[EXTI0_IRQn/32] |= 1<<(EXTI0_IRQn%32);
 		
 
-	// Initialize object groups
-	initializeClockObjects();
-	initializeTimerObjects();
-	initializeSMSObjects();
+
 			
 
 	osThreadNew(app_hw_init, NULL, NULL); // Create application main thread
