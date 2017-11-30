@@ -50,10 +50,17 @@ void thdAddTextMessage(void* argument){
 		osMutexAcquire(mutHour, osWaitForever);
 		text_message->hour = hour;
 		osMutexRelease(mutHour);
-	
+
 		// Add to linked list
-		/* to do */
-		
+		text_message->next = NULL;
+		if(textMessageHead == NULL){
+			textMessageHead = text_message;
+		}else{
+			TextMessage* pos = textMessageHead;
+			while(pos->next != NULL){pos=pos->next;}
+			pos->next = text_message;
+		}
+				
 		total_received++;
 
 	}

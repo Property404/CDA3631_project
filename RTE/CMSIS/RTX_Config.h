@@ -331,7 +331,7 @@
 //     <i> Applies to objects with system provided memory for data storage.
 //     <i> Default: 0
 #ifndef OS_MEMPOOL_DATA_SIZE
-#define OS_MEMPOOL_DATA_SIZE        1896
+#define OS_MEMPOOL_DATA_SIZE        2000
 #endif
  
 //   </e>

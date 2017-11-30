@@ -14,11 +14,16 @@ typedef struct{
 	uint32_t hour:8;
 	// Cache length(cause strlen() is O(n))
 	uint32_t length:8;
+	
+	// Next in the linked list
+	void* next;
+	
 	// Message proper
 	// Must be an array and not a pointer  in order for it to copy correctly to a memory pool
 	char message[MAX_TEXT_MESSAGE_LENGTH+1];
 } TextMessage;
 
+extern TextMessage* textMessageHead;
 void initializeSMSObjects(void);
 void initializeSMSThreads(void);
 
