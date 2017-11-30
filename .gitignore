@@ -11,4 +11,8 @@
 !hardware
 !*.uvoptx
 !*.uvprojx
-!./RTE/CMSIS/RTX_Config.h
+!RTE
+RTE/*
+!RTE/CMSIS
+RTE/CMSIS/*
+!RTE/CMSIS/RTX_Config.h
