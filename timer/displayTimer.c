@@ -17,7 +17,7 @@ int Init_thdDisplayTimer(void) {
   return(0);
 }
 
-#define YOFFSET 9	// time vertical offset from top in characters
+#define YOFFSET 28	// time vertical offset from top in characters
 
 void thdDisplayTimer (void *argument) {
 	uint32_t lminute, lsecond, lmillisecond;
