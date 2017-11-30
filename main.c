@@ -33,7 +33,7 @@ void app_hw_init (void *argument) {
 	// Initialize object groups
 	initializeClockObjects();
 	initializeTimerObjects();
-	//initializeSMSObjects();
+	initializeSMSObjects();
 	
 	
 	GLCD_Initialize();
@@ -43,7 +43,7 @@ void app_hw_init (void *argument) {
 	GLCD_SetFont(&GLCD_Font_6x8);
 	
 	// Create other threads here so that all initialization is done before others get scheduled.
-//	initializeSMSThreads();
+	initializeSMSThreads();
 	initializeTimerThreads();
 	initializeClockThreads();
 
