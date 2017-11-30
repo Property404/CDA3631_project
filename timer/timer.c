@@ -6,10 +6,10 @@ osMutexId_t mutTimerMinute, mutTimerSecond, mutTimerCentisecond;
 osSemaphoreId_t semTimer, semIncTimerSeconds, semIncTimerMinutes;
 
 void initializeTimerThreads(void){
-	Init_thdDisplayTimer();
-	Init_thdIncTimer();
-	Init_thdIncTimerSeconds();
-	Init_thdIncTimerMinutes();
+	if(-1 == Init_thdDisplayTimer())while(1){}
+	if(-1 == Init_thdIncTimer())while(1){}
+	if(-1 == Init_thdIncTimerSeconds())while(1){}
+	if(-1 == Init_thdIncTimerMinutes())while(1){}
 }
 
 void initializeTimerObjects(void){
