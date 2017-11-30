@@ -103,15 +103,11 @@ void thdDisplayMessages(void* argument){
 		while(1){
 			// Display current message
 			osMutexAcquire(mutTextMessageHead, osWaitForever);
-			/*
-			for(int i=0; i < currentMessage->length/MAX_LINE_WIDTH; i++){
-				for(int j=0; j<MAX_LINE_WIDTH && (i*MAX_LINE_WIDTH+j < currentMessage->length);j++){
-					GLCD_DrawChar((XOFFSET + j)*CHARWIDTH, (YOFFSET + i)*CHARHEIGHT, currentMessage->message[i*MAX_LINE_WIDTH+j]);
-				}
-			}*/		const char* NO_MESSAGES = "OH SO MANY MESSAGES";
-		for(int i=0; NO_MESSAGES[i] != '\0'; i++){
-			GLCD_DrawChar((XOFFSET + i+8)*CHARWIDTH, YOFFSET*CHARHEIGHT, NO_MESSAGES[i]);
-		}
+			for(int i=0; i < currentMessage->length; i++){
+					char m = currentMessage->message[i];
+					if(m<0x20 || m>'Z')break;
+					GLCD_DrawChar((XOFFSET + i)*CHARWIDTH, (YOFFSET)*CHARHEIGHT, m);
+			}
 			osMutexRelease(mutTextMessageHead);
 			
 			
