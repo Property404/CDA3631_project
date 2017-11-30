@@ -2,7 +2,6 @@
 #include "sms.h"
 #include "string.h"
 #include "clock.h"
-#include "Board_GLCD.h"
 int Init_thdAddTextMessage (void);
 int Init_thdDisplayMessages (void);
 osThreadId_t tid_thdDisplayMessages;

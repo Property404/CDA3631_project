@@ -5,7 +5,6 @@
 #include "RTE_Components.h"
 #include  CMSIS_device_header
 #include "cmsis_os2.h"
-#include "Board_GLCD.h"
 #include "Board_LED.h"
 #include "Board_Buttons.h"
 #include "GLCD_Config.h"
@@ -15,6 +14,7 @@
 #include "clock.h"
 #include "Serial.h"
 #include "sms.h"
+#include "display.h"
 extern GLCD_FONT tinyFont;//GLCD_Font_6x8;
 
 /********************************************/
@@ -37,8 +37,8 @@ void app_hw_init (void *argument) {
 	
 	
 	GLCD_Initialize();
-	GLCD_SetBackgroundColor(GLCD_COLOR_WHITE);
-	GLCD_SetForegroundColor(GLCD_COLOR_PURPLE);
+	GLCD_SetBackgroundColor(BACKGROUND_COLOR);
+	GLCD_SetForegroundColor(FOREGROUND_COLOR);
 	GLCD_ClearScreen(); 
 	GLCD_SetFont(&tinyFont);//&GLCD_Font_6x8);
 	
