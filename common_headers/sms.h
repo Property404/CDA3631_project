@@ -23,12 +23,20 @@ typedef struct{
 	char message[MAX_TEXT_MESSAGE_LENGTH+1];
 } TextMessage;
 
+extern osMutexId_t mutTextMessageHead;
 extern TextMessage* textMessageHead;
 void initializeSMSObjects(void);
 void initializeSMSThreads(void);
 
 extern osMemoryPoolId_t mplTextMessage;
 extern osMessageQueueId_t msgqCharBuffer;
+
+// Flags for displaying message
+#define NEW_MESSAGE (1<<0) // Used when there are previously no message, but now there are
+#define NEXT_MESSAGE (1<<1) // Used when joystick right
+#define PREVIOUS_MESSAGE (1<<2) // Used when joystick left
+#define SCROLL_UP (1<<3) // Move text message up and down when joystick moves as so
+#define SCROLL_DOWN (1<<4)
 
 // Check for issues
 #define _STATIC_ASSERT(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]

@@ -3,12 +3,9 @@
 #ifndef COMMON_HEADER_DISPLAY_TIME_COMPONENTS
 #define COMMON_HEADER_DISPLAY_TIME_COMPONENTS
 #include "time_components.h"
+#include "display.h"
 
-#define XOFFSET 6  // time horizontal offset from left in characters
-#define LCDWIDTH 320
-#define LCDHEIGHT 240
-#define CHARWIDTH 16
-#define CHARHEIGHT 24
+#define XOFFSET 23  // time horizontal offset from left in characters
 
 
 // Make these functions `static inline`, cause it's kinda silly to

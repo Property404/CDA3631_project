@@ -1,0 +1,4 @@
+#define LCDWIDTH 320
+#define LCDHEIGHT 240
+#define CHARWIDTH 6
+#define CHARHEIGHT 8
