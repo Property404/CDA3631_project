@@ -18,7 +18,7 @@ int Init_thdAddTextMessage (void) {
 void thdAddTextMessage(void* argument){
 	uint32_t total_received = 0;
 	while(1){
-		GLCD_DrawChar(10*15, 4*24, '!'+(char)total_received);
+		GLCD_DrawChar(10*15, 4*24, '0'+(char)total_received);
 		
 		// Store next 160 or less characters from serial in a buffer
 		char buffer[MAX_TEXT_MESSAGE_LENGTH+1] = {0};
@@ -27,20 +27,19 @@ void thdAddTextMessage(void* argument){
 			// Get the next character from the buffer or die
 			char character;
 			osMessageQueueGet(msgqCharBuffer, &character, NULL, osWaitForever);
-			GLCD_DrawChar(10*15, 4*24, 'a'+(char)length);
 			buffer[length] = character;
 			if(buffer[length] == 0 || buffer[length]=='a'){break;}
 			length++; // Fix plz
-			if(length >= MAX_TEXT_MESSAGE_LENGTH/10){buffer[length] = 0; break;}
+			if(length >= MAX_TEXT_MESSAGE_LENGTH){buffer[length] = 0; break;}
 		}
 		
-		//if(length == 0) continue;
-		
+		if(length == 0) continue;
+
 		// Add Text Message struct to memory pool
-		/*
 		TextMessage* text_message = osMemoryPoolAlloc(mplTextMessage, NULL);
 		memcpy(text_message->message, buffer, length);
 		text_message->length = length;
+		
 		// Have to add the time
 		osMutexAcquire(mutSecond, osWaitForever);
 		text_message->second = second;
@@ -50,8 +49,8 @@ void thdAddTextMessage(void* argument){
 		osMutexRelease(mutMinute);
 		osMutexAcquire(mutHour, osWaitForever);
 		text_message->hour = hour;
-		osMutexRelease(mutHour);*/
-		
+		osMutexRelease(mutHour);
+	
 		// Add to linked list
 		/* to do */
 		
