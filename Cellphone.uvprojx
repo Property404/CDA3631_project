@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -467,6 +467,11 @@
               <FileName>display.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\display.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtos_util.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\rtos_util.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -831,11 +836,6 @@
               <FilePath>.\sms\sms.c</FilePath>
             </File>
             <File>
-              <FileName>sms_threads.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\sms\sms_threads.c</FilePath>
-            </File>
-            <File>
               <FileName>addTextMessage.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\sms\addTextMessage.c</FilePath>
@@ -844,6 +844,11 @@
               <FileName>displayMessages.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\sms\displayMessages.c</FilePath>
+            </File>
+            <File>
+              <FileName>pollJoystick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sms\pollJoystick.c</FilePath>
             </File>
           </Files>
         </Group>

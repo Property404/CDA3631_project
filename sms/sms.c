@@ -11,10 +11,12 @@ TextMessage* textMessageHead;
 
 int Init_thdAddTextMessage (void);
 int Init_thdDisplayMessages (void);
+int Init_thdPollJoystick (void);
 
 void initializeSMSThreads(void){
 	Init_thdAddTextMessage();
 	Init_thdDisplayMessages();
+	Init_thdPollJoystick ();
 }
 
 void initializeSMSObjects(void){
