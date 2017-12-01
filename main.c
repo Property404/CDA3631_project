@@ -5,13 +5,13 @@
 #include "RTE_Components.h"
 #include  CMSIS_device_header
 #include "cmsis_os2.h"
-#include "Board_LED.h"
 #include "Board_Buttons.h"
 #include "stm32f2xx_hal.h"
 #include "rtx_os.h"
 #include "timer.h"
 #include "clock.h"
 #include "Serial.h"
+#include "JOY.h"
 #include "sms.h"
 #include "display.h"
 
@@ -44,13 +44,15 @@ int main (void) {
 	osKernelInitialize();     // Initialize CMSIS-RTOS
 	HAL_Init();   			
 	Buttons_Initialize();			// Does NOT use a HAL tick during initialization
-	LED_Initialize();
 
 	// Setup serial connection
 	SER_Init(115200);
 	NVIC_SetPriority(USART3_IRQn, 5);
 	NVIC_EnableIRQ(USART3_IRQn);
 	USART3 -> CR1 |= USART_CR1_RXNEIE;
+	
+	// And joystick
+//	JOY_Init();
 	
 	// To configure the USER and WAKEUP buttons to generate an interrupt...
 	// Enable EXTI15, EXTI13 and EXTI0 - Edge interrupt for all pin 15's, 13's 0's

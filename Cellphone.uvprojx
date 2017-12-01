@@ -835,6 +835,16 @@
               <FileType>1</FileType>
               <FilePath>.\sms\sms_threads.c</FilePath>
             </File>
+            <File>
+              <FileName>addTextMessage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sms\addTextMessage.c</FilePath>
+            </File>
+            <File>
+              <FileName>displayMessages.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sms\displayMessages.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

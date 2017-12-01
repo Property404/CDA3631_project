@@ -23,22 +23,20 @@ int Init_thdDisplayClock (void) {
 }
 
 void thdDisplayClock (void *argument) {
-	uint32_t lminute, lsecond, lhour;
-	
 	while(1){
 		uint32_t tflags = osThreadFlagsWait(UPDATE_ALL_TIME_COMPONENTS, osFlagsWaitAny, osWaitForever);
 
 		// Get values of shared resources
 		osMutexAcquire(mutSecond, osWaitForever);
-		lsecond = second;
+		const uint32_t lsecond = second;
 		osMutexRelease(mutSecond);
 		
 		osMutexAcquire(mutMinute, osWaitForever);
-		lminute = minute;
+		const uint32_t lminute = minute;
 		osMutexRelease(mutMinute);
 		
 		osMutexAcquire(mutHour, osWaitForever);
-		lhour = hour;
+		const uint32_t lhour = hour;
 		osMutexRelease(mutHour);
 		
 		if(tflags & UPDATE_HOURS){

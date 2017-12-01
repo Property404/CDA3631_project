@@ -13,5 +13,6 @@
 extern osMutexId_t mutGLCD;
 
 void setupDisplay(void);
-
+void drawNumber(const uint32_t number, const uint32_t char_offset, const double y_offset);
+void drawColons(const double y_offset);
 #endif

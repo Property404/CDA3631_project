@@ -7,7 +7,7 @@ osMemoryPoolId_t mplCharBuffer;
 osMessageQueueId_t msgqCharBuffer;
 osMutexId_t mutTextMessageHead;
 TextMessage* textMessageHead;
-osSemaphoreId_t semJoystick;
+//osSemaphoreId_t semJoystick;
 
 int Init_thdAddTextMessage (void);
 int Init_thdDisplayMessages (void);
@@ -22,5 +22,5 @@ void initializeSMSObjects(void){
 	  mplTextMessage = newMemoryPoolOrDie(MAX_NUMBER_OF_TEXT_MESSAGES, sizeof(TextMessage));
 		mutTextMessageHead = newMutexOrDie();
 		textMessageHead = NULL;
-		semJoystick = newSemaphoreOrDie(1,0);
+		//semJoystick = newSemaphoreOrDie(1,0);
 }

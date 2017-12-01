@@ -37,7 +37,7 @@
 //     <i> Defines the combined global dynamic memory size.
 //     <i> Default: 4096
 #ifndef OS_DYNAMIC_MEM_SIZE
-#define OS_DYNAMIC_MEM_SIZE         6000
+#define OS_DYNAMIC_MEM_SIZE         5584
 #endif
  
 //   <o>Kernel Tick Frequency [Hz] <1-1000000>
@@ -176,7 +176,7 @@
 //   <i> Defines stack size for Idle thread.
 //   <i> Default: 200
 #ifndef OS_IDLE_THREAD_STACK_SIZE
-#define OS_IDLE_THREAD_STACK_SIZE   96
+#define OS_IDLE_THREAD_STACK_SIZE   80
 #endif
  
 //   <q>Stack overrun checking
@@ -331,7 +331,7 @@
 //     <i> Applies to objects with system provided memory for data storage.
 //     <i> Default: 0
 #ifndef OS_MEMPOOL_DATA_SIZE
-#define OS_MEMPOOL_DATA_SIZE        1976
+#define OS_MEMPOOL_DATA_SIZE        1960
 #endif
  
 //   </e>

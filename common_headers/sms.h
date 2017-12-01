@@ -35,7 +35,7 @@ void initializeSMSThreads(void);
 // Objs
 extern osMemoryPoolId_t mplTextMessage;
 extern osMessageQueueId_t msgqCharBuffer;
-extern osSemaphoreId_t semJoystick;
+//extern osSemaphoreId_t semJoystick;
 
 // Threads
 extern osThreadId_t tid_thdDisplayMessages;

@@ -2,9 +2,10 @@
  */
 #ifndef COMMON_HEADER_DISPLAY_TIME_COMPONENTS
 #define COMMON_HEADER_DISPLAY_TIME_COMPONENTS
+
 #include "time_components.h"
 #include "display.h"
-
+/*
 #define XOFFSET 23  // time horizontal offset from left in characters
 
 
@@ -27,4 +28,5 @@ static inline void drawColons(double y_offset){
 }
 
 #undef XOFFSET
+*/
 #endif
