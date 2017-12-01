@@ -86,26 +86,44 @@ int Init_thdDisplayMessages (void) {
 }
 #include "display.h"
 #define MAX_LINE_WIDTH 30
-#define XOFFSET 15  // horizontal offset from left in characters
-#define YOFFSET 12
+#define XOFFSET (LCDWIDTH/(2*CHARWIDTH)) // horizontal offset from left in characters into middle
+#define YOFFSET (LCDHEIGHT/(2*CHARHEIGHT))  // vertical offset from top into middle
+
+static void displayMessage(const char*const message, const int size, const int y_offset){
+	const int X_START_POS = XOFFSET - size/2;
+	const int Y_POS = YOFFSET + y_offset;
+	for(int i=0;i<size;i++){
+		char m = message[i];
+		if(m < 0x20 || m > 'Z'){m='?';}//Prefer explicit confusion
+		GLCD_DrawChar((X_START_POS+i)*CHARWIDTH, Y_POS*CHARHEIGHT, message[i]);
+	}
+}
 void thdDisplayMessages(void* argument){
 	while(1){
 		// No messages, so wait until there are some
 		const char* NO_MESSAGES = "NO MESSAGES";
-		for(int i=0; NO_MESSAGES[i] != '\0'; i++){
-			GLCD_DrawChar((XOFFSET + i+8)*CHARWIDTH, YOFFSET*CHARHEIGHT, NO_MESSAGES[i]);
-		}
+		displayMessage(NO_MESSAGES, 11, -1);
+		displayMessage("SORRY", 5, 1);
 		osThreadFlagsWait(NEW_MESSAGE, osFlagsWaitAny, osWaitForever);
+
 		osMutexAcquire(mutTextMessageHead, osWaitForever);
-		TextMessage* currentMessage = textMessageHead;
+		TextMessage* current_message = textMessageHead;
+		int scroll_position = 0;
+		int lines = current_message->length/MAX_LINE_WIDTH + 1;
 		osMutexRelease(mutTextMessageHead);
 		while(1){
 			// Display current message
+			GLCD_ClearScreen();
 			osMutexAcquire(mutTextMessageHead, osWaitForever);
-			for(int i=0; i < currentMessage->length; i++){
-					char m = currentMessage->message[i];
-					if(m<0x20 || m>'Z')break;
-					GLCD_DrawChar((XOFFSET + i)*CHARWIDTH, (YOFFSET)*CHARHEIGHT, m);
+			if(lines == 0){
+			}else if(lines == 1){
+				displayMessage(current_message->message, current_message->length, 0);
+			}
+			else if(lines == 2){
+				displayMessage(current_message->message, MAX_LINE_WIDTH, -1);
+				displayMessage(current_message->message + MAX_LINE_WIDTH, current_message->length - MAX_LINE_WIDTH, 1);
+			}else{
+				displayMessage("BIG", 3, 0);
 			}
 			osMutexRelease(mutTextMessageHead);
 			
