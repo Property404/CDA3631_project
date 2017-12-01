@@ -13,18 +13,18 @@
 
 // Display a two-digit numeric component of the clock or timer
 static inline void drawNumber(uint32_t number, uint32_t char_offset, double y_offset){
+	osMutexAcquire(mutGLCD, osWaitForever);
 	GLCD_DrawChar((XOFFSET+char_offset)*CHARWIDTH,y_offset*CHARHEIGHT, 0x30 + number/10);
 	GLCD_DrawChar((XOFFSET+char_offset+1)*CHARWIDTH,y_offset*CHARHEIGHT, 0x30 + number%10);
+	osMutexRelease(mutGLCD);
 }
 // Display the colons between the numeric components
 static inline void drawColons(double y_offset){
+	osMutexAcquire(mutGLCD, osWaitForever);
 	GLCD_DrawChar((XOFFSET+2)*CHARWIDTH,y_offset*CHARHEIGHT, ':');
 	GLCD_DrawChar((XOFFSET+5)*CHARWIDTH,y_offset*CHARHEIGHT, ':');
+	osMutexRelease(mutGLCD);
 }
 
 #undef XOFFSET
-#undef LCDWIDTH
-#undef LCDHEIGHT
-#undef CHARWIDTH
-#undef CHARHEIGHT
 #endif

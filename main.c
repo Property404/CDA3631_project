@@ -7,7 +7,6 @@
 #include "cmsis_os2.h"
 #include "Board_LED.h"
 #include "Board_Buttons.h"
-#include "GLCD_Config.h"
 #include "stm32f2xx_hal.h"
 #include "rtx_os.h"
 #include "timer.h"
@@ -15,7 +14,6 @@
 #include "Serial.h"
 #include "sms.h"
 #include "display.h"
-extern GLCD_FONT tinyFont;//GLCD_Font_6x8;
 
 /********************************************/
 // The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
@@ -35,12 +33,9 @@ void app_hw_init (void *argument) {
 	initializeTimerObjects();
 	initializeSMSObjects();
 	
-	
-	GLCD_Initialize();
-	GLCD_SetBackgroundColor(BACKGROUND_COLOR);
-	GLCD_SetForegroundColor(FOREGROUND_COLOR);
-	GLCD_ClearScreen(); 
-	GLCD_SetFont(&tinyFont);//&GLCD_Font_6x8);
+	// GLCD etc
+	setupDisplay();
+
 	
 	// Create other threads here so that all initialization is done before others get scheduled.
 	initializeSMSThreads();

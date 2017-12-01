@@ -85,6 +85,8 @@ int Init_thdDisplayMessages (void) {
   return(0);
 }
 #include "display.h"
+#include "clock.h"
+#include "timer.h"
 #define MAX_LINE_WIDTH 30
 #define XOFFSET (LCDWIDTH/(2*CHARWIDTH)) // horizontal offset from left in characters into middle
 #define YOFFSET (LCDHEIGHT/(2*CHARHEIGHT))  // vertical offset from top into middle
@@ -95,6 +97,7 @@ static void displayMessage(const char*const message, const int size, const int y
 	for(int i=0;i<size;i++){
 		char m = message[i];
 		if(m < 0x20 || m > 'Z'){m='?';}//Prefer explicit confusion
+		if(m==0)break;
 		GLCD_DrawChar((X_START_POS+i)*CHARWIDTH, Y_POS*CHARHEIGHT, message[i]);
 	}
 }
@@ -109,23 +112,35 @@ void thdDisplayMessages(void* argument){
 		osMutexAcquire(mutTextMessageHead, osWaitForever);
 		TextMessage* current_message = textMessageHead;
 		int scroll_position = 0;
-		int lines = current_message->length/MAX_LINE_WIDTH + 1;
 		osMutexRelease(mutTextMessageHead);
 		while(1){
-			// Display current message
-			GLCD_ClearScreen();
+			// Clear screen (this is much more fluid than using GLCD_ClearScreen)
+			osMutexAcquire(mutGLCD, osWaitForever);
+			for(int i=-2;i<=2;i++){
+				for(int j=XOFFSET-MAX_LINE_WIDTH/2;j<XOFFSET+MAX_LINE_WIDTH/2;j++){
+					GLCD_DrawChar(j*CHARWIDTH, (YOFFSET+i)*CHARHEIGHT, ' ');
+				}
+			}
+
+			// Display current text at scroll position
 			osMutexAcquire(mutTextMessageHead, osWaitForever);
-			if(lines == 0){
-			}else if(lines == 1){
-				displayMessage(current_message->message, current_message->length, 0);
+			int chars_left=current_message->length - (scroll_position*MAX_LINE_WIDTH);
+			for(int i=0; i < 2; i++){
+				displayMessage(
+					current_message->message + ((scroll_position+i)*MAX_LINE_WIDTH),
+				chars_left > MAX_LINE_WIDTH ? MAX_LINE_WIDTH : chars_left > 0? chars_left : 0,
+				(i-1)*2);
+				chars_left -= MAX_LINE_WIDTH;
+				if(chars_left<=0)break;
 			}
-			else if(lines == 2){
-				displayMessage(current_message->message, MAX_LINE_WIDTH, -1);
-				displayMessage(current_message->message + MAX_LINE_WIDTH, current_message->length - MAX_LINE_WIDTH, 1);
-			}else{
-				displayMessage("BIG", 3, 0);
-			}
+			osMutexRelease(mutGLCD);
 			osMutexRelease(mutTextMessageHead);
+			
+			// Make sure we redisplay the other components
+			/*
+			osThreadFlagsSet(tid_thdDisplayClock, UPDATE_ALL_TIME_COMPONENTS);
+			osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_ALL_TIME_COMPONENTS);*/
+
 			
 			
 			// Wait until we get a message from the joystick
