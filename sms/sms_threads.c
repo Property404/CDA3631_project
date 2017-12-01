@@ -115,6 +115,7 @@ void thdDisplayMessages(void* argument){
 		osMutexRelease(mutTextMessageHead);
 		while(1){
 			// Clear screen (this is much more fluid than using GLCD_ClearScreen)
+			// 	Making a rectangle requires inflating the code size :(
 			osMutexAcquire(mutGLCD, osWaitForever);
 			for(int i=-2;i<=2;i++){
 				for(int j=XOFFSET-MAX_LINE_WIDTH/2;j<XOFFSET+MAX_LINE_WIDTH/2;j++){
@@ -136,15 +137,29 @@ void thdDisplayMessages(void* argument){
 			osMutexRelease(mutGLCD);
 			osMutexRelease(mutTextMessageHead);
 			
-			// Make sure we redisplay the other components
-			/*
-			osThreadFlagsSet(tid_thdDisplayClock, UPDATE_ALL_TIME_COMPONENTS);
-			osThreadFlagsSet(tid_thdDisplayTimer, UPDATE_ALL_TIME_COMPONENTS);*/
 
 			
 			
 			// Wait until we get a message from the joystick
-			osThreadFlagsWait(NEXT_MESSAGE | PREVIOUS_MESSAGE | SCROLL_UP | SCROLL_DOWN, osFlagsWaitAny, osWaitForever);
+			int flags = 
+				osThreadFlagsWait(NEXT_MESSAGE | PREVIOUS_MESSAGE | SCROLL_UP | SCROLL_DOWN, osFlagsWaitAny, osWaitForever);
+			if (flags & NEXT_MESSAGE){
+				
+				// Display next in cycle
+				osMutexAcquire(mutTextMessageHead, osWaitForever);
+				if(current_message->next != NULL){
+					current_message = current_message->next;
+				}else{
+					current_message = textMessageHead;
+				}
+				osMutexRelease(mutTextMessageHead);
+				scroll_position=0;
+			}else if(flags & SCROLL_UP){
+				if(scroll_position > 0)scroll_position--;
+			}else if(flags & SCROLL_DOWN){
+				scroll_position++;
+			}
+			
 		}
 	}
 }

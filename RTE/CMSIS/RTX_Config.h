@@ -176,7 +176,7 @@
 //   <i> Defines stack size for Idle thread.
 //   <i> Default: 200
 #ifndef OS_IDLE_THREAD_STACK_SIZE
-#define OS_IDLE_THREAD_STACK_SIZE   200
+#define OS_IDLE_THREAD_STACK_SIZE   96
 #endif
  
 //   <q>Stack overrun checking
