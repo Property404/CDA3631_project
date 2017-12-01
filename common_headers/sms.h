@@ -3,8 +3,6 @@
 #define MAX_TEXT_MESSAGE_LENGTH 160
 #define MAX_NUMBER_OF_TEXT_MESSAGES 10
 #define CHAR_BUFFER_SIZE (MAX_TEXT_MESSAGE_LENGTH/10)
-
-
 #include "rtx_os.h"
 
 typedef struct{
@@ -23,13 +21,25 @@ typedef struct{
 	char message[MAX_TEXT_MESSAGE_LENGTH+1];
 } TextMessage;
 
+
+
+// The text message linked list and the mutex
+// that protects the WHOLE LIST
 extern osMutexId_t mutTextMessageHead;
 extern TextMessage* textMessageHead;
+
+// init functions
 void initializeSMSObjects(void);
 void initializeSMSThreads(void);
 
+// Objs
 extern osMemoryPoolId_t mplTextMessage;
 extern osMessageQueueId_t msgqCharBuffer;
+extern osSemaphoreId_t semJoystick;
+
+// Threads
+extern osThreadId_t tid_thdDisplayMessages;
+
 
 // Flags for displaying message
 #define NEW_MESSAGE (1<<0) // Used when there are previously no message, but now there are

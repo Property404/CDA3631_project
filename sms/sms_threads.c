@@ -1,10 +1,11 @@
-#include "sms_threads.h"
 #include "sms.h"
 #include "string.h"
 #include "clock.h"
+#include "timer.h"
+#include "display.h"
+
 int Init_thdAddTextMessage (void);
 int Init_thdDisplayMessages (void);
-osThreadId_t tid_thdDisplayMessages;
 
 // Add a text message to the msgq
 void thdAddTextMessage(void* argument);
@@ -84,9 +85,7 @@ int Init_thdDisplayMessages (void) {
   
   return(0);
 }
-#include "display.h"
-#include "clock.h"
-#include "timer.h"
+
 #define MAX_LINE_WIDTH 30
 #define XOFFSET (LCDWIDTH/(2*CHARWIDTH)) // horizontal offset from left in characters into middle
 #define YOFFSET (LCDHEIGHT/(2*CHARHEIGHT))  // vertical offset from top into middle

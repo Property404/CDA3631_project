@@ -7,6 +7,23 @@
 #include "clock.h"
 #include "sms.h"
 #include "Serial.h"
+#include "JOY.h"
+
+/********************************************/
+// The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
+// of SysTick, so we need to route the HAL's tick call to the RTOS's tick.
+uint32_t HAL_GetTick(void) {
+	/*
+	static uint32_t old_status = JOY_CENTER;
+	uint32_t new_status = JOY_GetKeys();
+	if(new_status != old_status){
+		if(JOY_RIGHT){
+			osThreadFlagsSet(tid_thdDisplayMessages, NEXT_MESSAGE);
+		}
+	}*/
+	return osKernelGetTickCount();
+}
+
 
 // USER button and TAMPER button
 // More code than the WAKEUP button handler because

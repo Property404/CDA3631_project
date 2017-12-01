@@ -15,14 +15,6 @@
 #include "sms.h"
 #include "display.h"
 
-/********************************************/
-// The RTOS and HAL need the SysTick for timing. The RTOS wins and gets control
-// of SysTick, so we need to route the HAL's tick call to the RTOS's tick.
-uint32_t HAL_GetTick(void) { 
-	return osKernelGetTickCount();
-}
-
-
 /*----------------------------------------------------------------------------
  * HW Init - since the HAL depends on a periodic timer, we need the RTOS
  * in order for several HW devices to initialize correctly, like the GLCD
@@ -43,8 +35,6 @@ void app_hw_init (void *argument) {
 	initializeClockThreads();
 
 
-
-	
 	osThreadExit(); // job is done, thread suicide. There better be other threads created...
 }
 
