@@ -24,20 +24,25 @@ void thdAddTextMessage(void* argument){
 			
 		// Store next 160 or less characters
 		text_message->length = 0;
-		while(1){
+		while(text_message->length < MAX_TEXT_MESSAGE_LENGTH){
 			// Get the next character from the buffer or die
 			char character;
 			osMessageQueueGet(msgqCharBuffer, &character, NULL, osWaitForever);
+
+			
 			// Only display characters up to Z
 			if(character > 'Z'){
 				character -= ('z'-'Z');// convert to capital
 			}
+			
+			// Add char
 			text_message->message[text_message->length] = character;
-			if(text_message->message[text_message->length] == 0){break;}
-			text_message->length++; // Fix plz
-			if(text_message->length >= MAX_TEXT_MESSAGE_LENGTH){
+			
+			// Break if '\0' or '\r'
+			if(character == 0)
 				break;
-			}
+			
+			text_message->length++;
 		}
 		
 		// Start over if empty
@@ -57,15 +62,18 @@ void thdAddTextMessage(void* argument){
 
 		// Add to linked list
 		text_message->next = NULL;
+		text_message->prev = NULL;
 		osMutexAcquire(mutTextMessageHead, osWaitForever);
 		if(textMessageHead == NULL){
 			textMessageHead = text_message;
 			// Notify DisplayMessages
 			osThreadFlagsSet(tid_thdDisplayMessages, NEW_MESSAGE);
 		}else{
+			// Find tail and add
 			TextMessage* pos = textMessageHead;
 			while(pos->next != NULL){pos=pos->next;}
 			pos->next = text_message;
+			text_message->prev = pos;
 		}
 		osMutexRelease(mutTextMessageHead);
 				

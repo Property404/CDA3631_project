@@ -53,11 +53,16 @@ void thdDisplayMessages(void* argument){
 			// Display current text at scroll position
 			osMutexAcquire(mutTextMessageHead, osWaitForever);
 			int chars_left=current_message->length - (scroll_position*MAX_LINE_WIDTH);
-			for(int i=0; i < 2; i++){
+			// Displaying three lines
+			for(int i=0; i <= 2; i++){
 				displayMessage(
+					// Actual message at the proper position
 					current_message->message + ((scroll_position+i)*MAX_LINE_WIDTH),
-				chars_left > MAX_LINE_WIDTH ? MAX_LINE_WIDTH : chars_left > 0? chars_left : 0,
-				(i-1)*2);
+				
+					chars_left > MAX_LINE_WIDTH ? MAX_LINE_WIDTH : chars_left > 0? chars_left : 0,
+					
+					// We're using double spacing here
+					(i-1)*2);
 				chars_left -= MAX_LINE_WIDTH;
 				if(chars_left<=0)break;
 			}
@@ -68,6 +73,9 @@ void thdDisplayMessages(void* argument){
 			// Wait until we get a message from the joystick
 			const int flags = 
 				osThreadFlagsWait(DELETE_MESSAGE | NEXT_MESSAGE | PREVIOUS_MESSAGE | SCROLL_UP | SCROLL_DOWN, osFlagsWaitAny, osWaitForever);
+			
+			scroll_position=0;// Have to reset scroll position, otherwise we'd start in random or invalid place
+			
 			if (flags & NEXT_MESSAGE){
 				
 				// Display next in cycle
@@ -78,28 +86,18 @@ void thdDisplayMessages(void* argument){
 					current_message = textMessageHead;
 				}
 				osMutexRelease(mutTextMessageHead);
-				scroll_position=0;// Have to reset scroll position, otherwise we'd start in random or invalid place
 			
 			}else if(flags & PREVIOUS_MESSAGE){
-				// Display previous is cycle
-				// This is tricker because we have to start from the head
-				// since it's not a doubly linked list
-				// Plus, this is O(n) worst case and average case
+				// Display previous in cycle
 				
 				osMutexAcquire(mutTextMessageHead, osWaitForever);
 				
-				// If there's only one item in LL, just skip all this nonsense
-				if(textMessageHead->next == NULL){osMutexRelease(mutTextMessageHead);continue;}
+				if(current_message->prev != NULL){
+					current_message = current_message->prev;
+				}else{
+					while(current_message->next != NULL)current_message = current_message->next;
+				}
 				
-				// Cycle through to find out which TM points to the current one
-				TextMessage* tm = textMessageHead;
-				while(tm -> next != current_message){
-					// If tm->next is NULL, that means we were at the head, so we're picking the last tail
-					if(tm->next == NULL)break;
-					
-					tm = tm->next;
-				};
-				current_message = tm;
 				
 				osMutexRelease(mutTextMessageHead);
 			}else if(flags & DELETE_MESSAGE){
@@ -165,31 +163,37 @@ void thdDisplayMessages(void* argument){
 					}else
 					
 					if(flags & JOYSTICK_PUSH){
+						
+						// Clear dialog
 						GLCD_SetForegroundColor(BACKGROUND_COLOR);
 						GLCD_DrawString(YES_POS_X, YES_POS_Y, "YES");
 						GLCD_DrawString(NO_POS_X, NO_POS_Y, "NO");
 						displayMessage("DELETE?", 7, 0);
 						GLCD_SetForegroundColor(FOREGROUND_COLOR);
+					
+						// Delete if "yes" selected
 						if(pos==0){
 							osMutexAcquire(mutTextMessageHead, osWaitForever);
-							// Here, we remove from linked list
-							if(current_message == textMessageHead){
-								textMessageHead = textMessageHead->next;
-							}else{
-								// Cycle through to find out which TM points to the current one
-								TextMessage* tm = textMessageHead;
-								while(tm -> next != current_message){
-									tm = tm->next;
-								};
-								tm->next = current_message->next;
-							}
+							// Record it's links
+							TextMessage* next = current_message->next;
+							TextMessage* prev = current_message->prev;
 							
-							TextMessage *new_current_message =  current_message->next == NULL ? textMessageHead : current_message->next;
 							// Now, we deallocate
+							int is_head = 0;
+							if(current_message == textMessageHead){
+								is_head = 1;
+							}
 							osMemoryPoolFree(mplTextMessage, current_message);
 							
+							// Change links
+							next->prev = prev;
+							prev->next = next;
+							
 							// Change current message
-							current_message = new_current_message;
+							current_message = next==NULL?prev:next;
+							if(is_head){
+								textMessageHead = current_message;
+							}
 							osMutexRelease(mutTextMessageHead);
 							
 							
@@ -199,7 +203,7 @@ void thdDisplayMessages(void* argument){
 					
 				}
 				
-				// If none are left, break
+				// If none are left, go back to "no messages" screen
 				osMutexAcquire(mutTextMessageHead, osWaitForever);
 				if(textMessageHead == NULL){osMutexRelease(mutTextMessageHead);break;}
 				osMutexRelease(mutTextMessageHead);

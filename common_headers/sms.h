@@ -15,6 +15,7 @@ typedef struct{
 	
 	// Next in the linked list
 	void* next;
+	void* prev;
 	
 	// Message proper
 	// Must be an array and not a pointer  in order for it to copy correctly to a memory pool
