@@ -28,14 +28,18 @@ void thdPollJoystick(void* argument){
 		const uint32_t new_status = JOY_GetKeys();
 		if(new_status != old_status){
 			uint32_t flag = 0;
+			
 			if(new_status & JOY_RIGHT){
 				flag = NEXT_MESSAGE;
-			}else if(new_status&JOY_LEFT){
+			}else if(new_status & JOY_LEFT){
 				flag = PREVIOUS_MESSAGE;
-			}else if(new_status&JOY_UP){
+			}else if(new_status & JOY_UP){
 				flag = SCROLL_UP;
-			}else if(new_status&JOY_DOWN){
+			}else if(new_status & JOY_DOWN){
 				flag = SCROLL_DOWN;
+			}
+			else if(new_status & JOY_CENTER){
+				flag = DELETE_MESSAGE;
 			}
 			osThreadFlagsSet(tid_thdDisplayMessages, flag);
 			old_status = new_status;

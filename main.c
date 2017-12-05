@@ -1,5 +1,8 @@
 /*----------------------------------------------------------------------------
- * CMSIS-RTOS 'main' function template
+ * Dagan Martinez
+ * CDA3631, Fall 2017, Florida Polytechnic University
+ * Professor: Dr. David Foster
+ * https://github.com/Property404/CDA3631_project
  *---------------------------------------------------------------------------*/
  
 #include "RTE_Components.h"
@@ -28,12 +31,10 @@ void app_hw_init (void *argument) {
 	// GLCD etc
 	setupDisplay();
 
-	
 	// Create other threads here so that all initialization is done before others get scheduled.
 	initializeSMSThreads();
 	initializeTimerThreads();
 	initializeClockThreads();
-
 
 	osThreadExit(); // job is done, thread suicide. There better be other threads created...
 }
@@ -74,9 +75,6 @@ int main (void) {
 
 	NVIC->ISER[EXTI15_10_IRQn/32] |= 1<< (EXTI15_10_IRQn%32);
 	NVIC->ISER[EXTI0_IRQn/32] |= 1<<(EXTI0_IRQn%32);
-		
-
-
 			
 
 	osThreadNew(app_hw_init, NULL, NULL); // Create application main thread

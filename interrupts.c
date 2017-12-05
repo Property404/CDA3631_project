@@ -21,7 +21,6 @@ uint32_t HAL_GetTick(void) {
 // More code than the WAKEUP button handler because
 // This can deal with more than one pin
 void EXTI15_10_IRQHandler(void){
-	static int32_t i = 0;  // Reminder that an ISR can create local memory with a "static" modifier
 	// The NVIC automatically clears the flag bit in NVIC for EXTI15_10_IRQHandler by jumping to this vector address
 	// However, we must also manually clear the interrupt flag for EXTI15
 	// USER Button
@@ -38,11 +37,6 @@ void EXTI15_10_IRQHandler(void){
 		// Increment minutes
 		osSemaphoreRelease(semIncMinutes);
 	}
-
-	else {// EXTI interrupts for pins 10-14 can be sequentially checked for here if they are enabled/configured
-		// otherwise this NVIC interrupt should have been triggered, so
-		while(1) {i++;} // scream and die	
-	}
 	return;
 }
 
@@ -56,7 +50,6 @@ void EXTI0_IRQHandler(void){
 
 // Serial port
 void USART3_IRQHandler(void){
-	
 	char character = SER_GetChar();
 	if(character == '\r' || character > 'z')character = 0;
 	osMessageQueuePut(msgqCharBuffer, &character, NULL, 0);

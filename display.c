@@ -25,14 +25,14 @@ void setupDisplay(){
 // have a separate C file
 
 // Display a two-digit numeric component of the clock or timer
-void drawNumber(const uint32_t number, const uint32_t char_offset, const double y_offset){
+void drawNumber(const uint32_t number, const uint32_t char_offset, const float y_offset){
 	osMutexAcquire(mutGLCD, osWaitForever);
 	GLCD_DrawChar((XOFFSET+char_offset)*CHARWIDTH,y_offset*CHARHEIGHT, 0x30 + number/10);
 	GLCD_DrawChar((XOFFSET+char_offset+1)*CHARWIDTH,y_offset*CHARHEIGHT, 0x30 + number%10);
 	osMutexRelease(mutGLCD);
 }
 // Display the colons between the numeric components
-void drawColons(const double y_offset){
+void drawColons(const float y_offset){
 	osMutexAcquire(mutGLCD, osWaitForever);
 	GLCD_DrawChar((XOFFSET+2)*CHARWIDTH,y_offset*CHARHEIGHT, ':');
 	GLCD_DrawChar((XOFFSET+5)*CHARWIDTH,y_offset*CHARHEIGHT, ':');

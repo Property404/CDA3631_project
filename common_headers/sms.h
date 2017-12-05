@@ -1,6 +1,6 @@
 #ifndef COMMON_HEADER_SMS
 #define COMMON_HEADER_SMS
-#define MAX_TEXT_MESSAGE_LENGTH 50
+#define MAX_TEXT_MESSAGE_LENGTH 160
 #define MAX_NUMBER_OF_TEXT_MESSAGES 10
 #define CHAR_BUFFER_SIZE (16)
 #include "rtx_os.h"
@@ -42,10 +42,14 @@ extern osThreadId_t tid_thdDisplayMessages;
 
 // Flags for displaying message
 #define NEW_MESSAGE (1<<0) // Used when there are previously no message, but now there are
-#define NEXT_MESSAGE (1<<1) // Used when joystick right
-#define PREVIOUS_MESSAGE (1<<2) // Used when joystick left
+#define JOYSTICK_RIGHT (1<<1)
+#define NEXT_MESSAGE JOYSTICK_RIGHT // Used when joystick right
+#define JOYSTICK_LEFT (1<<2)
+#define PREVIOUS_MESSAGE JOYSTICK_LEFT // Used when joystick left
 #define SCROLL_UP (1<<3) // Move text message up and down when joystick moves as so
 #define SCROLL_DOWN (1<<4)
+#define JOYSTICK_PUSH (1<<5)
+#define DELETE_MESSAGE JOYSTICK_PUSH
 
 // Check for issues
 #define _STATIC_ASSERT(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]

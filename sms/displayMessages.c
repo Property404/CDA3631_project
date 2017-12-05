@@ -25,15 +25,15 @@ static void displayMessage(const char*const message, const int size, const int y
 	const int Y_POS = YOFFSET + y_offset;
 	for(int i=0;i<size;i++){
 		char m = message[i];
-		if(m < 0x20 || m > 'Z'){m='?';}//Prefer explicit confusion
 		if(m==0)break;
+		if(m < 0x20 || m > 'Z'){m='?';}//Prefer explicit confusion
+
 		GLCD_DrawChar((X_START_POS+i)*CHARWIDTH, Y_POS*CHARHEIGHT, message[i]);
 	}
 }
 void thdDisplayMessages(void* argument){
 	while(1){
 		// No messages, so wait until there are some
-		displayMessage("NO MSGS", 7, 0);
 		osThreadFlagsWait(NEW_MESSAGE, osFlagsWaitAny, osWaitForever);
 
 		osMutexAcquire(mutTextMessageHead, osWaitForever);
@@ -67,7 +67,7 @@ void thdDisplayMessages(void* argument){
 			
 			// Wait until we get a message from the joystick
 			const int flags = 
-				osThreadFlagsWait(NEXT_MESSAGE | PREVIOUS_MESSAGE | SCROLL_UP | SCROLL_DOWN, osFlagsWaitAny, osWaitForever);
+				osThreadFlagsWait(DELETE_MESSAGE | NEXT_MESSAGE | PREVIOUS_MESSAGE | SCROLL_UP | SCROLL_DOWN, osFlagsWaitAny, osWaitForever);
 			if (flags & NEXT_MESSAGE){
 				
 				// Display next in cycle
@@ -102,6 +102,109 @@ void thdDisplayMessages(void* argument){
 				current_message = tm;
 				
 				osMutexRelease(mutTextMessageHead);
+			}else if(flags & DELETE_MESSAGE){
+				// Deletion involves removing from linked list
+				// And possibly exiting this loop if there are no 
+				// messages left(to go back to the "no messages screen"
+				//
+				// But, in addition, we must prompt the user first
+				osMutexAcquire(mutGLCD, osWaitForever);
+				
+				// Clear text		
+				for(int i=-2;i<=2;i++){
+					for(int j=XOFFSET-MAX_LINE_WIDTH/2;j<XOFFSET+MAX_LINE_WIDTH/2;j++){
+						GLCD_DrawChar(j*CHARWIDTH, (YOFFSET+i)*CHARHEIGHT, ' ');
+					}
+				}
+				
+				// Constants for positions in dialog
+				const float RECTANGLE_SIZE = .9;//Between 0 and 1
+				const int RECTANGLE_X = LCDWIDTH*(1-RECTANGLE_SIZE);
+				const int RECTANGLE_WIDTH = LCDWIDTH*(RECTANGLE_SIZE)-RECTANGLE_X;
+				const int RECTANGLE_Y = LCDHEIGHT*(1-RECTANGLE_SIZE);
+				const int RECTANGLE_HEIGHT = LCDHEIGHT*(RECTANGLE_SIZE)-RECTANGLE_Y;
+				
+				// Position for the "No" and "Yes" options
+				const int NO_POS_X = RECTANGLE_WIDTH*.75 + RECTANGLE_X;
+				const int NO_POS_Y = RECTANGLE_Y+.75*RECTANGLE_HEIGHT;//-RECTANGLE_Y1*.25 + RECTANGLE_Y2;
+				const int YES_POS_X = RECTANGLE_WIDTH*.25 + RECTANGLE_X;
+				const int YES_POS_Y = NO_POS_Y;
+				
+				// Draw the dialog
+				displayMessage("DELETE?", 7, 0);
+
+				osMutexRelease(mutGLCD);
+				// Now, wait for a user response
+				uint8_t pos = 0;// 0 if the "yes" is selected, 1 if "no" is
+				while(1){
+					osMutexAcquire(mutGLCD, osWaitForever);
+					// De-highlight unselected item, and highlight the selected
+					if(pos==0){
+						GLCD_SetForegroundColor(SECONDARY_FOREGROUND_COLOR);
+					}
+					GLCD_DrawString(NO_POS_X, NO_POS_Y, "NO");
+					
+					
+					if(pos==1){
+						GLCD_SetForegroundColor(SECONDARY_FOREGROUND_COLOR);
+					}else{
+						GLCD_SetForegroundColor(FOREGROUND_COLOR);
+					}
+					GLCD_DrawString(YES_POS_X, YES_POS_Y, "YES");
+					GLCD_SetForegroundColor(FOREGROUND_COLOR);
+					osMutexRelease(mutGLCD);
+					
+					// Allow user to switch between and selecto ptions
+					const int flags = osThreadFlagsWait(JOYSTICK_LEFT | JOYSTICK_RIGHT | JOYSTICK_PUSH, osFlagsWaitAny, osWaitForever);
+					
+					if(flags & JOYSTICK_LEFT && pos){
+						pos = 0;// Select yes
+					}else
+					if(flags & JOYSTICK_RIGHT && !pos){
+						pos = 1;//select no
+					}else
+					
+					if(flags & JOYSTICK_PUSH){
+						GLCD_SetForegroundColor(BACKGROUND_COLOR);
+						GLCD_DrawString(YES_POS_X, YES_POS_Y, "YES");
+						GLCD_DrawString(NO_POS_X, NO_POS_Y, "NO");
+						displayMessage("DELETE?", 7, 0);
+						GLCD_SetForegroundColor(FOREGROUND_COLOR);
+						if(pos==0){
+							osMutexAcquire(mutTextMessageHead, osWaitForever);
+							// Here, we remove from linked list
+							if(current_message == textMessageHead){
+								textMessageHead = textMessageHead->next;
+							}else{
+								// Cycle through to find out which TM points to the current one
+								TextMessage* tm = textMessageHead;
+								while(tm -> next != current_message){
+									tm = tm->next;
+								};
+								tm->next = current_message->next;
+							}
+							
+							TextMessage *new_current_message =  current_message->next == NULL ? textMessageHead : current_message->next;
+							// Now, we deallocate
+							osMemoryPoolFree(mplTextMessage, current_message);
+							
+							// Change current message
+							current_message = new_current_message;
+							osMutexRelease(mutTextMessageHead);
+							
+							
+						}
+						break;
+					}
+					
+				}
+				
+				// If none are left, break
+				osMutexAcquire(mutTextMessageHead, osWaitForever);
+				if(textMessageHead == NULL){osMutexRelease(mutTextMessageHead);break;}
+				osMutexRelease(mutTextMessageHead);
+				
+				
 				
 			// Change where we are in scroll
 			}else if(flags & SCROLL_UP){

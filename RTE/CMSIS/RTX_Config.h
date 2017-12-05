@@ -37,7 +37,7 @@
 //     <i> Defines the combined global dynamic memory size.
 //     <i> Default: 4096
 #ifndef OS_DYNAMIC_MEM_SIZE
-#define OS_DYNAMIC_MEM_SIZE         5584
+#define OS_DYNAMIC_MEM_SIZE         5160
 #endif
  
 //   <o>Kernel Tick Frequency [Hz] <1-1000000>
@@ -331,7 +331,7 @@
 //     <i> Applies to objects with system provided memory for data storage.
 //     <i> Default: 0
 #ifndef OS_MEMPOOL_DATA_SIZE
-#define OS_MEMPOOL_DATA_SIZE        1960
+#define OS_MEMPOOL_DATA_SIZE        1952
 #endif
  
 //   </e>
