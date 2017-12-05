@@ -2,9 +2,6 @@
 #include "clock.h"
 #include "string.h"
 
-// This is bigger than the thread stack, so it goes outside
-char textBuffer[MAX_TEXT_MESSAGE_LENGTH+1];
-
 // Add a text message to the msgq
 void thdAddTextMessage(void* argument);
 osThreadId_t tid_thdAddTextMessage;
@@ -19,10 +16,14 @@ int Init_thdAddTextMessage (void) {
 void thdAddTextMessage(void* argument){
 	uint32_t total_received = 0;
 	while(1){
+		// Add Text Message struct to memory pool
+		TextMessage* text_message = osMemoryPoolAlloc(mplTextMessage, NULL);
 		
-		// Store next 160 or less characters from serial in a buffer
-
-		unsigned int length = 0;
+		// Make a do-while loop here just in case we want to start over
+		do{
+			
+		// Store next 160 or less characters
+		text_message->length = 0;
 		while(1){
 			// Get the next character from the buffer or die
 			char character;
@@ -31,18 +32,17 @@ void thdAddTextMessage(void* argument){
 			if(character > 'Z'){
 				character -= ('z'-'Z');// convert to capital
 			}
-			textBuffer[length] = character;
-			if(textBuffer[length] == 0){break;}
-			length++; // Fix plz
-			if(length >= MAX_TEXT_MESSAGE_LENGTH){textBuffer[length] = 0; break;}
+			text_message->message[text_message->length] = character;
+			if(text_message->message[text_message->length] == 0){break;}
+			text_message->length++; // Fix plz
+			if(text_message->length >= MAX_TEXT_MESSAGE_LENGTH){
+				break;
+			}
 		}
 		
-		if(length == 0) continue;
-
-		// Add Text Message struct to memory pool
-		TextMessage* text_message = osMemoryPoolAlloc(mplTextMessage, NULL);
-		memcpy(text_message->message, textBuffer, length);
-		text_message->length = length;
+		// Start over if empty
+		if(text_message->length == 0) continue;
+		}while(0);
 		
 		// Have to add the time
 		osMutexAcquire(mutSecond, osWaitForever);

@@ -1,8 +1,8 @@
 #ifndef COMMON_HEADER_SMS
 #define COMMON_HEADER_SMS
-#define MAX_TEXT_MESSAGE_LENGTH 160
+#define MAX_TEXT_MESSAGE_LENGTH 50
 #define MAX_NUMBER_OF_TEXT_MESSAGES 10
-#define CHAR_BUFFER_SIZE (MAX_TEXT_MESSAGE_LENGTH/10)
+#define CHAR_BUFFER_SIZE (16)
 #include "rtx_os.h"
 
 typedef struct{
@@ -35,7 +35,6 @@ void initializeSMSThreads(void);
 // Objs
 extern osMemoryPoolId_t mplTextMessage;
 extern osMessageQueueId_t msgqCharBuffer;
-//extern osSemaphoreId_t semJoystick;
 
 // Threads
 extern osThreadId_t tid_thdDisplayMessages;

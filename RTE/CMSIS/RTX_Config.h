@@ -209,7 +209,7 @@
 //   <e>Object specific Memory allocation
 //   <i> Enables object specific memory allocation.
 #ifndef OS_TIMER_OBJ_MEM
-#define OS_TIMER_OBJ_MEM            1
+#define OS_TIMER_OBJ_MEM            0
 #endif
  
 //     <o>Number of Timer objects <1-1000>
@@ -237,7 +237,7 @@
 //   <i> May be set to 0 when timers are not used.
 //   <i> Default: 200
 #ifndef OS_TIMER_THREAD_STACK_SIZE
-#define OS_TIMER_THREAD_STACK_SIZE  200
+#define OS_TIMER_THREAD_STACK_SIZE  144
 #endif
  
 //   <o>Timer Callback Queue entries <0-256>
@@ -276,7 +276,7 @@
 //   <e>Object specific Memory allocation
 //   <i> Enables object specific memory allocation.
 #ifndef OS_MUTEX_OBJ_MEM
-#define OS_MUTEX_OBJ_MEM            1
+#define OS_MUTEX_OBJ_MEM            0
 #endif
  
 //     <o>Number of Mutex objects <1-1000>
@@ -296,7 +296,7 @@
 //   <e>Object specific Memory allocation
 //   <i> Enables object specific memory allocation.
 #ifndef OS_SEMAPHORE_OBJ_MEM
-#define OS_SEMAPHORE_OBJ_MEM        1
+#define OS_SEMAPHORE_OBJ_MEM        0
 #endif
  
 //     <o>Number of Semaphore objects <1-1000>

@@ -77,20 +77,22 @@ uint32_t JOY_GetKeys (void) {
 /* Read board keyboard inputs */
 uint8_t reg;
 uint32_t val = 0;
+	
+
 if (IOE_Read (0x12, &reg) == 0) {     /* Read monitor pin state register    
 */
 reg = ~reg;
 if (reg & (1 << 3)) {
-val |= JOY_UP;
-}
-if (reg & (1 << 4)) {
 val |= JOY_RIGHT;
 }
+if (reg & (1 << 4)) {
+val |= JOY_UP;
+}
 if (reg & (1 << 5)) {
-val |= JOY_LEFT;
+val |= JOY_DOWN;
 }
 if (reg & (1 << 6)) {
-val |= JOY_DOWN;
+val |= JOY_LEFT;
 }
 if (reg & (1 << 7)) {
 val |= JOY_CENTER;

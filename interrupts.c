@@ -58,10 +58,7 @@ void EXTI0_IRQHandler(void){
 void USART3_IRQHandler(void){
 	
 	char character = SER_GetChar();
-	osSemaphoreRelease(semTimer);
-	if(character == '\r')character = 0;
-	if(osMessageQueuePut(msgqCharBuffer, &character, NULL, 0) != osOK){
-		while(1){}
-	}
+	if(character == '\r' || character > 'z')character = 0;
+	osMessageQueuePut(msgqCharBuffer, &character, NULL, 0);
 	return;
 }

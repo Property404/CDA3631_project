@@ -52,7 +52,7 @@ int main (void) {
 	USART3 -> CR1 |= USART_CR1_RXNEIE;
 	
 	// And joystick
-//	JOY_Init();
+	JOY_Init();
 	
 	// To configure the USER and WAKEUP buttons to generate an interrupt...
 	// Enable EXTI15, EXTI13 and EXTI0 - Edge interrupt for all pin 15's, 13's 0's

@@ -11,10 +11,15 @@ int Init_thdDisplayMessages (void) {
   return(0);
 }
 
-#define MAX_LINE_WIDTH 30
+#define MAX_LINE_WIDTH 16
 #define XOFFSET (LCDWIDTH/(2*CHARWIDTH)) // horizontal offset from left in characters into middle
 #define YOFFSET (LCDHEIGHT/(2*CHARHEIGHT))  // vertical offset from top into middle
 
+// This displays a line in the centerish of the screen
+// It's VERY fancy
+// message - the message to display
+// size - size of the message
+// y_offset - how many units from the center the message is, usually from [-2, 2]
 static void displayMessage(const char*const message, const int size, const int y_offset){
 	const int X_START_POS = XOFFSET - size/2;
 	const int Y_POS = YOFFSET + y_offset;
@@ -28,9 +33,7 @@ static void displayMessage(const char*const message, const int size, const int y
 void thdDisplayMessages(void* argument){
 	while(1){
 		// No messages, so wait until there are some
-		const char* NO_MESSAGES = "NO MESSAGES";
-		displayMessage(NO_MESSAGES, 11, -1);
-		displayMessage("SORRY", 5, 1);
+		displayMessage("NO MSGS", 7, 0);
 		osThreadFlagsWait(NEW_MESSAGE, osFlagsWaitAny, osWaitForever);
 
 		osMutexAcquire(mutTextMessageHead, osWaitForever);
@@ -63,7 +66,7 @@ void thdDisplayMessages(void* argument){
 			
 			
 			// Wait until we get a message from the joystick
-			int flags = 
+			const int flags = 
 				osThreadFlagsWait(NEXT_MESSAGE | PREVIOUS_MESSAGE | SCROLL_UP | SCROLL_DOWN, osFlagsWaitAny, osWaitForever);
 			if (flags & NEXT_MESSAGE){
 				
@@ -75,11 +78,38 @@ void thdDisplayMessages(void* argument){
 					current_message = textMessageHead;
 				}
 				osMutexRelease(mutTextMessageHead);
-				scroll_position=0;
+				scroll_position=0;// Have to reset scroll position, otherwise we'd start in random or invalid place
+			
+			}else if(flags & PREVIOUS_MESSAGE){
+				// Display previous is cycle
+				// This is tricker because we have to start from the head
+				// since it's not a doubly linked list
+				// Plus, this is O(n) worst case and average case
+				
+				osMutexAcquire(mutTextMessageHead, osWaitForever);
+				
+				// If there's only one item in LL, just skip all this nonsense
+				if(textMessageHead->next == NULL){osMutexRelease(mutTextMessageHead);continue;}
+				
+				// Cycle through to find out which TM points to the current one
+				TextMessage* tm = textMessageHead;
+				while(tm -> next != current_message){
+					// If tm->next is NULL, that means we were at the head, so we're picking the last tail
+					if(tm->next == NULL)break;
+					
+					tm = tm->next;
+				};
+				current_message = tm;
+				
+				osMutexRelease(mutTextMessageHead);
+				
+			// Change where we are in scroll
 			}else if(flags & SCROLL_UP){
-				if(scroll_position > 0)scroll_position--;
+				if(scroll_position > 0)
+					scroll_position--;
 			}else if(flags & SCROLL_DOWN){
-				scroll_position++;
+				if(scroll_position < current_message->length/MAX_LINE_WIDTH)
+					scroll_position++;
 			}
 			
 		}
